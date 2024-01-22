@@ -14,6 +14,7 @@ const Index = () => {
   return (
     <View className="p-4 bg-slate-50 flex-1">
       <Text className="text-xl">Features</Text>
+      <CustomButton title="logout" onPress={() => logout()} />
       <View style={{ flexDirection: "row", gap: 30, marginTop: 20 }}>
         <CircularCard title={"Tourist \n Package"} />
         <CircularCard title="Guide" link="/book/" />

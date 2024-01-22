@@ -6,9 +6,9 @@ import UploadImage from "../components/CImagePicker";
 import InputWithLogo from "../components/InputWithLogo";
 import { useState } from "react";
 import useAuth from "./hooks/useAuth";
-import { useStore } from "zustand";
 import { useRegisterUser } from "./globalStore/globalStore";
 import Colors from "../constants/Colors";
+import useStore from "./hooks/useStore";
 import { CheckBox } from "react-native-btr";
 export default function Modal() {
   const [firstname, setFirstName] = useState("");
@@ -16,12 +16,17 @@ export default function Modal() {
   const [citizenShipNo, setCitizenShipNo] = useState("");
   const [image, setImage] = useState<string | null>(null);
   const { signin } = useAuth();
+  const { userType } = useStore();
   const userData = useRegisterUser((state) => state);
 
   const [checked, setChecked] = useState(false);
 
   const handleRegister = () => {
-    if (firstname === "" || lastname === "" || citizenShipNo === "") {
+    if (firstname === "" || lastname === "") {
+      alert("Please fill in all fields");
+      return;
+    }
+    if (userType == "Guide" && citizenShipNo === "") {
       alert("Please fill in all fields");
       return;
     }

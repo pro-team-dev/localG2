@@ -24,14 +24,7 @@ export default function AppLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          headerTitle(props) {
-            return (
-              <View>
-                <Text className="text-2xl font-semibold">LocalG</Text>
-                {/* <Text>{JSON.stringify(location)}</Text> */}
-              </View>
-            );
-          },
+          title: "LocalG",
           tabBarIcon: () => <AntDesign name="home" size={24} color="black" />,
           headerRight() {
             return (

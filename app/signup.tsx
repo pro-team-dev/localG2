@@ -43,6 +43,10 @@ export default function Signup() {
       setInitialData(username, password, email);
       router.push("/touristExtraPage");
     }
+    else if (userType == "Tourist") {
+      setInitialData(username, password, email);
+      router.push("/touristExtraPage");
+    }
   };
 
   return (
@@ -88,7 +92,7 @@ export default function Signup() {
           </View>
 
           <CustomButton
-            title={userType == "Guide" ? "Next" : "Register Here"}
+            title="Next"
             onPress={handleRegister}
             style={{ width: 300, alignSelf: "center", borderRadius: 40 }}
           />

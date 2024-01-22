@@ -12,7 +12,9 @@
       "resizeMode": "contain",
       "backgroundColor": "#FEF9B0"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true
     },
@@ -21,7 +23,9 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "permissions": ["android.permission.RECORD_AUDIO"],
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ],
       "package": "com.allwcons.localG"
     },
     "web": {
@@ -59,9 +63,8 @@
         "origin": false
       },
       "eas": {
-        "projectId": "585f98f5-91af-4f25-8277-660a93ceb636"
+        "projectId": "320b579e-2462-4cc6-9aa8-26556a7be6fa"
       }
-    },
-    "owner": "allwcons"
+    }
   }
 }
