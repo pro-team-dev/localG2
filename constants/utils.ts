@@ -1,1 +1,1 @@
-export const IMAGE_DIVIDER = 2.3;
+export const IMAGE_DIVIDER = 2.7;

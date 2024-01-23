@@ -24,7 +24,6 @@ export default function UploadImage(props: ImageUploaderProps) {
       aspect: [3, 3],
       quality: 1,
     });
-    console.log(JSON.stringify(_image));
     if (!_image.canceled) {
       setImage(_image.assets[0].uri);
     }

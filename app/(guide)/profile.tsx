@@ -7,6 +7,7 @@ import {
   Image,
   StyleSheet,
   Dimensions,
+  Switch,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useFonts } from "expo-font";
@@ -17,44 +18,222 @@ import UploadImage from "../../components/CImagePicker";
 import { IMAGE_DIVIDER } from "../../constants/utils";
 import UserReviewCard from "../../components/Card";
 import { ScrollView } from "react-native-gesture-handler";
+import ReviewStar from "../../components/reviewStar";
+import { AntDesign, Feather, FontAwesome5, Fontisto } from "@expo/vector-icons";
+import Seperator from "../../components/seperator";
+import Colors from "../../constants/Colors";
 const Profile: React.FC = () => {
   const navigation = useNavigation();
   const [image, setImage] = useState<string | null>(null);
   const [coverImage, setCoverImage] = useState<string | null>(null);
+  const [number, setNumber] = useState<string | undefined>("9811826820");
+  const [email, setEmail] = useState<string | undefined>("rabni@gmail.com");
+  const [isEdit, setIsEdit] = useState<boolean>(false);
+  const [hourly, setHourly] = useState<number>(1000);
+  const [hourlyNegotiable, setHourlyNegotiable] = useState<boolean>(false);
+  const [daily, setDaily] = useState<number>(5000);
+  const [dailyNegotiable, setDailyNegotiable] = useState<boolean>(false);
+
+  const handleEdit = () => {
+    setIsEdit(!isEdit);
+  }
+  const handleEditSave = () => {
+    setIsEdit(!isEdit);
+  }
 
   return (
-    <View style={styles.container}>
-      <UploadBackgroundImage />
-      <View
-        style={{
-          marginTop: Dimensions.get("window").height / IMAGE_DIVIDER - 70,
-        }}
-      >
-        <UploadImage setImage={setImage} image={image} />
+    <ScrollView style={{ height: Dimensions.get("window").height }}>
+      <View style={styles.container}>
+        <UploadBackgroundImage />
+        <View
+          style={{
+            marginTop: Dimensions.get("window").height / IMAGE_DIVIDER - 70,
+            marginRight: "auto",
+            marginLeft: -10
+          }}
+        >
+          <UploadImage setImage={setImage} image={image} />
+        </View>
+        <View style={styles.userDetail}>
+          <View>
+            <Text style={styles.username}>Atul Tiwari</Text>
+            <ReviewStar rating={4.5} height={17} width={17} />
+          </View>
+          <View style={{ flex: 1, marginLeft: 25, marginTop: 4 }}>
+            <Text style={{ color: Colors.primary["primary-0"], fontWeight: "bold" }}>{`Nrs ${hourly}  \n /hour`}</Text>
+          </View>
+        </View>
+        <View style={{ width: "100%", marginTop: 30, marginLeft: 20, flexDirection: "row", alignItems: "center" }}>
+          <View style={{ flexDirection: "column" }}>
+            <Text style={{ fontSize: 20, fontWeight: "bold", marginBottom: 10 }}>About</Text>
+            <View className="flex-row items-center" style={{ gap: 10 }}>
+              <Feather name="phone-call" />
+              {isEdit ? <TextInput style={styles.editInput} value={number} onChangeText={setNumber} /> : <Text>{number}</Text>}
+            </View>
+            <View className="flex-row items-center" style={{ gap: 10 }}>
+              <Fontisto name="email" />
+              {isEdit ? <TextInput style={styles.editInput} value={email} onChangeText={setEmail} /> : <Text>{email}</Text>}
+            </View>
+          </View>
+          <View style={{ marginLeft: "auto", marginTop: 30 }}>
+            {isEdit ? <TouchableOpacity onPress={handleEditSave} style={{ backgroundColor: Colors.primary.btn, borderRadius: 10, padding: 10 }}>
+              <AntDesign name="check" size={24} color="white" />
+            </TouchableOpacity> :
+              <TouchableOpacity onPress={handleEdit} style={{ backgroundColor: "#fff", borderRadius: 10, padding: 10 }}>
+                <AntDesign name="edit" size={24} color="black" />
+              </TouchableOpacity>
+            }
+          </View>
+        </View>
+        <Seperator />
+
+        <View className="w-full">
+          <Text className="text-xl">Languages</Text>
+          <Languages isEdit={isEdit} />
+        </View>
+        <Seperator />
+        <View className="w-full">
+          <Text className="text-xl">Pricing (Nrs.)</Text>
+          <View className="flex-row justify-evenly mx-2 px-2 bg-gray-200 mt-4 py-5 rounded-xl" style={{ gap: 20 }}>
+            <View className="flex-column items-center" style={{ gap: 10, marginTop: 0 }}>
+              <Text className="text-primary-primary-0">Hourly</Text>
+              <View className="flex-column items-center mx-3" style={{ gap: 10 }}>
+                {isEdit ?
+                  <>
+                    <TextInput style={styles.priceEditInput} value={hourly.toString()} onChangeText={(text) => setHourly(parseInt(text))} />
+                    <View className="flex-row items-center">
+                      <Text>Negotiable</Text>
+                      <Switch value={hourlyNegotiable} onValueChange={setHourlyNegotiable} />
+                    </View>
+                  </>
+                  :
+                  <>
+                    <Text>{hourly}</Text>
+                    <Text>{hourlyNegotiable ? "Negotiable" : "Non-Negotiable"}</Text>
+                  </>
+                }
+
+              </View>
+            </View>
+            <View className="flex-column items-center" style={{ gap: 10, marginTop: 0 }}>
+              <Text className="text-primary-primary-0">One Day</Text>
+              <View className="flex-column items-center mx-3" style={{ gap: 10 }}>
+                {isEdit ?
+                  <>
+                    <TextInput style={styles.priceEditInput} value={daily.toString()} onChangeText={(text) => setDaily(parseInt(text))} />
+                    <View className="flex-row items-center">
+                      <Text>Negotiable</Text>
+                      <Switch value={dailyNegotiable} onValueChange={setDailyNegotiable} />
+                    </View>
+                  </>
+                  :
+                  <>
+                    <Text>{daily}</Text>
+                    <Text>{dailyNegotiable ? "Negotiable" : "Non-Negotiable"}</Text>
+                  </>
+                }
+              </View>
+            </View>
+          </View>
+          <Text className="ml-auto mt-3">*For up to <Text className="text-primary-primary-0">3-person Group</Text></Text>
+        </View>
+        <Seperator />
+        <ScrollView className="my-1" style={{ width: Dimensions.get("window").width - 30 }} horizontal>
+          <View style={{ width: Dimensions.get("window").width - 30 }}>
+            <UserReviewCard
+              rating={5}
+              reviewText={
+                "I had an amazing experience with the tourist guide. They were very knowledgeable and showed me all the hidden gems of the city. I highly recommend their services to anyone looking for a memorable and insightful tour."
+              }
+              username={"Atul Tiwari"}
+              avatar={"https://i.pravatar.cc/300"}
+            />
+          </View>
+          <View style={{ width: Dimensions.get("window").width - 30 }}>
+            <UserReviewCard
+              rating={3.5}
+              reviewText={
+                "I had an amazing experience with the tourist guide. They were very knowledgeable and showed me all the hidden gems of the city. I highly recommend their services to anyone looking for a memorable and insightful tour."
+              }
+              username={"Anuj Paudel"}
+              avatar={"https://i.pravatar.cc/400"}
+            />
+          </View>
+
+        </ScrollView>
       </View>
-      <Text style={styles.username}>Rabin Lamichhane</Text>
-      <Text style={styles.email}>rabin@gmail.com</Text>
-      <ScrollView className="w-full my-5">
-        <UserReviewCard
-          rating={5}
-          reviewText={
-            "I had an amazing experience with the tourist guide. They were very knowledgeable and showed me all the hidden gems of the city. I highly recommend their services to anyone looking for a memorable and insightful tour."
-          }
-          username={"Atul Tiwari"}
-          avatar={"https://i.pravatar.cc/300"}
-        />
-        <UserReviewCard
-          rating={3.5}
-          reviewText={
-            "I had an amazing experience with the tourist guide. They were very knowledgeable and showed me all the hidden gems of the city. I highly recommend their services to anyone looking for a memorable and insightful tour."
-          }
-          username={"Anuj Paudel"}
-          avatar={"https://i.pravatar.cc/400"}
-        />
-      </ScrollView>
-    </View>
+    </ScrollView>
   );
 };
+
+
+
+function Languages(props: { isEdit: boolean }) {
+  const { isEdit } = props;
+  const languageData = ["English", "Nepali", "Hindi", "German"]
+  let [lan, setLan] = useState<string[]>(["Nepali"]);
+  const [language, setLanguage] = useState<string>("");
+
+  const handleAddLanguage = () => {
+    if (language.trim() == "") return;
+    setLan([...lan, language]);
+  }
+
+  const handleDelete = (index: number) => {
+    let _lan = [...lan];
+    _lan.splice(index, 1);
+    setLan(_lan);
+  }
+  return (
+    <View>
+      {isEdit ?
+        <View>
+          <View className="flex-row" style={{ gap: 10, marginTop: 10, alignItems: "center" }}>
+            <TextInput value={language} onChangeText={setLanguage} style={styles.editInput} placeholder="Add Language" />
+            <TouchableOpacity onPress={handleAddLanguage} style={{ backgroundColor: Colors.primary.btn, borderRadius: 10, height: 40, paddingHorizontal: 10, justifyContent: "center" }}>
+              <AntDesign name="plus" size={24} color="white" />
+            </TouchableOpacity>
+          </View>
+          <View>
+            {lan.map((item, index) => (
+              <LanguageItemDeleteable key={index} language={item} index={index} handleDelete={handleDelete} />
+            ))}
+          </View>
+        </View>
+
+        :
+        <View className="flex-row" style={{ gap: 10, marginTop: 10 }}>
+          {lan.map((item, index) => (
+            <LanguageItem key={index} language={item} />
+          ))}
+        </View>
+      }
+
+
+    </View>
+  )
+}
+
+function LanguageItemDeleteable(props: { language?: string, index: number, handleDelete: (index: number) => void }) {
+
+  return (
+    <View className="p-1 rounded-sm px-2 flex-row items-center" style={{ gap: 10 }}>
+      <Text className="text-[16px]">{props.language}</Text>
+      <TouchableOpacity className="ml-auto" onPress={() => props.handleDelete(props.index)}>
+        <AntDesign name="close" size={24} color="black" />
+      </TouchableOpacity>
+    </View>
+  )
+}
+
+function LanguageItem(props: { language?: string }) {
+  return (
+    <View className="bg-gray-200 p-1 rounded-sm px-2">
+      <Text className="text-[16px]">{props.language}</Text>
+    </View>
+  )
+}
+
 
 const styles = StyleSheet.create({
   container: {
@@ -71,6 +250,26 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     backgroundColor: "black",
     position: "absolute",
+  },
+  editInput: {
+    width: 200,
+    height: 40,
+    backgroundColor: "#fff",
+    borderRadius: 10,
+    padding: 10,
+    marginBottom: 10,
+    marginTop: 10,
+    marginLeft: 10,
+  },
+  priceEditInput: {
+    width: 100,
+    height: 40,
+    backgroundColor: "#fff",
+    borderRadius: 10,
+    padding: 10,
+    marginBottom: 10,
+    marginTop: 10,
+    marginLeft: 10,
   },
   profileImage: {
     width: "100%",
@@ -95,10 +294,8 @@ const styles = StyleSheet.create({
     color: "black",
   },
   username: {
-    position: "absolute",
-    paddingTop: Dimensions.get("window").height / 2.6 - 100,
-    fontSize: 20,
-    color: "white",
+    fontSize: 16,
+    fontWeight: "bold",
   },
   email: {
     position: "absolute",
@@ -106,6 +303,14 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: "white",
   },
+  userDetail: {
+    color: "white",
+    position: "absolute",
+    top: Dimensions.get("window").height / IMAGE_DIVIDER + 10,
+    left: 120,
+    flexDirection: "row",
+
+  }
 });
 
 export default Profile;

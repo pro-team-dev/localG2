@@ -45,18 +45,10 @@ export default function AppLayout() {
       <Tabs.Screen
         name="profile"
         options={{
-          headerRight(props) {
-            return (
-              <TouchableOpacity onPress={() => logout()}>
-                <View className="w-10 h-10 bg-slate-100 rounded-full mr-5 justify-center items-center overflow-hidden">
-                  <AntDesign name="logout" size={20} color="gray" />
-                </View>
-              </TouchableOpacity>
-            );
-          },
           title: "Profile",
           tabBarIcon: () => <AntDesign name="API" size={24} color="black" />,
           ...config,
+          headerShown: false,
         }}
       />
     </Tabs>

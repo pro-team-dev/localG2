@@ -19,7 +19,6 @@ const Index = () => {
   const { userType, setUserType } = useStore();
   const { isLoading, user, logout } = useAuth();
   useEffect(() => {
-    console.log("userType", userType);
     if (!isLoading) {
       if (user && rootNavigationState) {
         if (userType === "Guide") {
