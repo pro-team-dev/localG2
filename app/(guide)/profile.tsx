@@ -59,7 +59,7 @@ const Profile: React.FC = () => {
             <Text style={styles.username}>Atul Tiwari</Text>
             <ReviewStar rating={4.5} height={17} width={17} />
           </View>
-          <View style={{ flex: 1, marginLeft: 25, marginTop: 4 }}>
+          <View style={{ flex: 1, marginLeft: 60, marginTop: 4 }}>
             <Text style={{ color: Colors.primary["primary-0"], fontWeight: "bold" }}>{`Nrs ${hourly}  \n /hour`}</Text>
           </View>
         </View>
@@ -138,6 +138,7 @@ const Profile: React.FC = () => {
           <Text className="ml-auto mt-3">*For up to <Text className="text-primary-primary-0">3-person Group</Text></Text>
         </View>
         <Seperator />
+        <Text className="w-full text-xl">Reviews</Text>
         <ScrollView className="my-1" style={{ width: Dimensions.get("window").width - 30 }} horizontal>
           <View style={{ width: Dimensions.get("window").width - 30 }}>
             <UserReviewCard
