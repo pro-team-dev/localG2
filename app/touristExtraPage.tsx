@@ -41,24 +41,26 @@ export default function Modal() {
       </View>
       <View className={"p-4 mt-auto mb-auto mx-5"}>
         <UploadImage image={image} setImage={setImage} />
-        <InputWithLogo
-          logo="user"
-          value={firstname}
-          onChangeText={(text) => setFirstName(text)}
-          placeholder="FirstName"
-        />
-        <InputWithLogo
-          logo="user"
-          value={lastname}
-          onChangeText={(text) => setLastName(text)}
-          placeholder="LastName"
-        />
-        <InputWithLogo
-          logo="unlock"
-          value={citizenShipNo}
-          onChangeText={(text) => setCitizenShipNo(text)}
-          placeholder="CitizenShip"
-        />
+        <View style={{ gap: 30 }}>
+          <InputWithLogo
+            logo="user"
+            value={firstname}
+            onChangeText={(text) => setFirstName(text)}
+            placeholder="FirstName"
+          />
+          <InputWithLogo
+            logo="user"
+            value={lastname}
+            onChangeText={(text) => setLastName(text)}
+            placeholder="LastName"
+          />
+          <InputWithLogo
+            logo="unlock"
+            value={citizenShipNo}
+            onChangeText={(text) => setCitizenShipNo(text)}
+            placeholder="CitizenShip"
+          />
+        </View>
         <View className="flex-row justify-center mt-5">
           <View className="w-5 rounded-md mb-5 mr-5">
             <CheckBox

@@ -8,10 +8,9 @@ import {
 import React, { useState } from "react";
 import { AntDesign } from "@expo/vector-icons";
 import { router } from "expo-router";
-import { locationType } from "../guide";
+import type locationType from "../index";
 import { useLocationStore } from "../../globalStore/locationStore";
 import LanguageSelector from "../../../components/CDropDownCustom";
-import DateTime from "../../../components/DateTime";
 
 interface CustomHeaderProps {
   onBackPress: () => void;
@@ -86,7 +85,6 @@ const BookingArea = () => {
               </View>
               <View className="flex-row items-center justify-between">
                 <Text>Search DeadLine</Text>
-                <DateTime />
               </View>
             </View>
           </View>

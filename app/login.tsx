@@ -29,7 +29,7 @@ export default function LoginForm() {
   };
 
   return (
-    <KeyboardAvoidingView className="flex-1">
+    <KeyboardAvoidingView className="flex-1 bg-white">
       <View
         className="items-center "
         style={{ transform: [{ translateY: 100 }] }}
@@ -42,20 +42,30 @@ export default function LoginForm() {
       </View>
       <View className={"p-4 mt-auto mb-auto mx-5"}>
         <Text className="text-3xl text-center -mt-5 mb-6 font-bold">LOGIN</Text>
-        <InputWithLogo
-          logo="user"
-          value={username}
-          onChangeText={(text) => setUsername(text)}
-          placeholder="Username"
-        />
-        <InputWithLogo
-          logo="lock"
-          value={password}
-          onChangeText={(text) => setPassword(text)}
-          placeholder="Password"
-          secureTextEntry={true}
-        />
-        <View className="flex-row items-center mt-1 mb-10 gap-3">
+        <View style={{ gap: 30 }}>
+          <InputWithLogo
+            logo="user"
+            value={username}
+            onChangeText={(text) => setUsername(text)}
+            placeholder="Username"
+          />
+          <InputWithLogo
+            logo="lock"
+            value={password}
+            onChangeText={(text) => setPassword(text)}
+            placeholder="Password"
+            secureTextEntry={true}
+          />
+        </View>
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            marginTop: 20,
+            marginBottom: 20,
+            gap: 3,
+          }}
+        >
           <Text className={"text-sm"}>Don't have an account?</Text>
           <Link className="text-blue-500 font-bold" href={"/"}>
             Register here

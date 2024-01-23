@@ -58,32 +58,34 @@ export default function Signup() {
           <Text className="text-3xl text-center -mt-5 mb-6 font-bold">
             Register
           </Text>
-          <InputWithLogo
-            logo="user"
-            value={username}
-            onChangeText={(text) => setUsername(text)}
-            placeholder="Username"
-          />
-          <InputWithLogo
-            logo="user"
-            value={email}
-            onChangeText={(text) => setEmail(text)}
-            placeholder="Email"
-          />
-          <InputWithLogo
-            logo="lock"
-            value={password}
-            onChangeText={(text) => setPassword(text)}
-            placeholder="Password"
-            secureTextEntry={true}
-          />
-          <InputWithLogo
-            logo="unlock"
-            value={confirmPassword}
-            onChangeText={(text) => setConfirmPassword(text)}
-            placeholder="Confirm Password"
-            secureTextEntry={true}
-          />
+          <View style={{ gap: 30, marginBottom: 20 }}>
+            <InputWithLogo
+              logo="user"
+              value={username}
+              onChangeText={(text) => setUsername(text)}
+              placeholder="Username"
+            />
+            <InputWithLogo
+              logo="user"
+              value={email}
+              onChangeText={(text) => setEmail(text)}
+              placeholder="Email"
+            />
+            <InputWithLogo
+              logo="lock"
+              value={password}
+              onChangeText={(text) => setPassword(text)}
+              placeholder="Password"
+              secureTextEntry={true}
+            />
+            <InputWithLogo
+              logo="unlock"
+              value={confirmPassword}
+              onChangeText={(text) => setConfirmPassword(text)}
+              placeholder="Confirm Password"
+              secureTextEntry={true}
+            />
+          </View>
 
           <CustomButton
             title={userType == "Guide" ? "Next" : "Register Here"}

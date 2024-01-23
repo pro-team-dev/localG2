@@ -19,7 +19,7 @@ const RootLayout = () => {
   return (
     <AuthContext.Provider value={{ user, setUser }}>
       <GlobalStoreContext.Provider value={{ userType, setUserType }}>
-        <SafeAreaView className="flex-1">
+        <SafeAreaView className="flex-1 ">
           {/* <Slot /> */}
           <Stack initialRouteName="login">
             <Stack.Screen name="login" options={{ headerShown: false }} />

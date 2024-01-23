@@ -10,10 +10,10 @@ const InputWithLogo = (props: InputWithLogoType) => {
   return (
     <View
       style={{
-        flex: 1,
+        // flex: 1,
         flexDirection: "row",
         alignItems: "center",
-        marginTop: 4,
+        marginTop: 10,
         backgroundColor: "white",
       }}
     >
