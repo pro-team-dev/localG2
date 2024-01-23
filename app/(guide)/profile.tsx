@@ -22,6 +22,8 @@ import ReviewStar from "../../components/reviewStar";
 import { AntDesign, Feather, FontAwesome5, Fontisto } from "@expo/vector-icons";
 import Seperator from "../../components/seperator";
 import Colors from "../../constants/Colors";
+import CustomButton from "../../components/CustomButton";
+import useAuth from "../hooks/useAuth";
 const Profile: React.FC = () => {
   const navigation = useNavigation();
   const [image, setImage] = useState<string | null>(null);
@@ -33,6 +35,14 @@ const Profile: React.FC = () => {
   const [hourlyNegotiable, setHourlyNegotiable] = useState<boolean>(false);
   const [daily, setDaily] = useState<number>(5000);
   const [dailyNegotiable, setDailyNegotiable] = useState<boolean>(false);
+  const [checkReviews, setCheckReviews] = useState<boolean>(false);
+  let reviewData = [{ rating: 5, reviewText: "I had an amazing experience with the tourist guide. They were very knowledgeable and showed me all the hidden gems of the city. I highly recommend their services to anyone looking for a memorable and insightful tour.", username: "Atul Tiwari", avatar: "https://i.pravatar.cc/300" }, { rating: 3.5, reviewText: "I had an amazing experience with the tourist guide. They were very knowledgeable and showed me all the hidden gems of the city. I highly recommend their services to anyone looking for a memorable and insightful tour.", username: "Anuj Paudel", avatar: "https://i.pravatar.cc/400" }]
+  const [reviews, setReviews] = useState<{
+    rating: number;
+    reviewText: string;
+    username: string;
+    avatar: string;
+  }[]>(reviewData);
 
   const handleEdit = () => {
     setIsEdit(!isEdit);
@@ -40,6 +50,7 @@ const Profile: React.FC = () => {
   const handleEditSave = () => {
     setIsEdit(!isEdit);
   }
+  const { logout } = useAuth();
 
   return (
     <ScrollView style={{ height: Dimensions.get("window").height }}>
@@ -58,6 +69,7 @@ const Profile: React.FC = () => {
           <View>
             <Text style={styles.username}>Atul Tiwari</Text>
             <ReviewStar rating={4.5} height={17} width={17} />
+
           </View>
           <View style={{ flex: 1, marginLeft: 60, marginTop: 4 }}>
             <Text style={{ color: Colors.primary["primary-0"], fontWeight: "bold" }}>{`Nrs ${hourly}  \n /hour`}</Text>
@@ -139,29 +151,32 @@ const Profile: React.FC = () => {
         </View>
         <Seperator />
         <Text className="w-full text-xl">Reviews</Text>
-        <ScrollView className="my-1" style={{ width: Dimensions.get("window").width - 30 }} horizontal>
-          <View style={{ width: Dimensions.get("window").width - 30 }}>
-            <UserReviewCard
-              rating={5}
-              reviewText={
-                "I had an amazing experience with the tourist guide. They were very knowledgeable and showed me all the hidden gems of the city. I highly recommend their services to anyone looking for a memorable and insightful tour."
-              }
-              username={"Atul Tiwari"}
-              avatar={"https://i.pravatar.cc/300"}
-            />
+        {reviews.length == 0 ?
+          <View className="w-full">
+            <Text className="text-sm m-auto mt-5">No Reviews Yet</Text>
           </View>
-          <View style={{ width: Dimensions.get("window").width - 30 }}>
-            <UserReviewCard
-              rating={3.5}
-              reviewText={
-                "I had an amazing experience with the tourist guide. They were very knowledgeable and showed me all the hidden gems of the city. I highly recommend their services to anyone looking for a memorable and insightful tour."
-              }
-              username={"Anuj Paudel"}
-              avatar={"https://i.pravatar.cc/400"}
-            />
-          </View>
+          :
+          <View>
+            <ScrollView className="" style={{ width: Dimensions.get("window").width - 30 }} horizontal>
+              {reviews.map((item, index) => (
+                <View key={index} style={{ width: Dimensions.get("window").width - 30 }}>
+                  <UserReviewCard
+                    rating={item.rating}
+                    reviewText={item.reviewText}
+                    username={item.username}
+                    avatar={item.avatar}
+                  />
+                </View>
+              ))}
 
-        </ScrollView>
+            </ScrollView>
+          </View>}
+      </View>
+      <View className="w-full m-auto items-center mb-5">
+        <CustomButton
+          title="Logout"
+          onPress={() => logout()}
+        />
       </View>
     </ScrollView>
   );
@@ -207,9 +222,9 @@ function Languages(props: { isEdit: boolean }) {
           {lan.map((item, index) => (
             <LanguageItem key={index} language={item} />
           ))}
+          {lan.length == 0 ? <Text className="mx-auto pt-4 items-center">Add Languages you are fluent in </Text> : null}
         </View>
       }
-
 
     </View>
   )
