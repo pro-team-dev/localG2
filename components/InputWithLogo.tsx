@@ -14,7 +14,6 @@ const InputWithLogo = (props: InputWithLogoType) => {
         flexDirection: "row",
         alignItems: "center",
         marginTop: 10,
-        backgroundColor: "white",
       }}
     >
       <AntDesign color={"green"} size={20} name={props.logo} />
