@@ -16,7 +16,7 @@ const Index = () => {
       <Text className="text-xl">Features</Text>
       <View style={{ flexDirection: "row", gap: 30, marginTop: 20 }}>
         <CircularCard title={"Tourist \n Package"} />
-        <CircularCard title="Guide" link="/book/bookingArea" />
+        <CircularCard title="Guide" link="/book/" />
         <CircularCard title={"Company \n Package"} />
       </View>
       <View

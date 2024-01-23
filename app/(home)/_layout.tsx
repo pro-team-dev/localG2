@@ -67,17 +67,6 @@ export default function AppLayout() {
         }}
       />
       <Tabs.Screen
-        name="guide"
-        options={{
-          title: "Guide",
-          tabBarIcon: () => <AntDesign name="API" size={24} color="black" />,
-          ...config,
-          headerShown: false,
-          tabBarItemStyle: { display: "none" },
-          tabBarStyle: { display: "none" },
-        }}
-      />
-      <Tabs.Screen
         name="book/index"
         options={{
           title: "Guide",

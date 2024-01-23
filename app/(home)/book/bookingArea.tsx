@@ -4,13 +4,15 @@ import {
   StatusBar,
   TouchableOpacity,
   TextInput,
+  Switch,
 } from "react-native";
 import React, { useState } from "react";
 import { AntDesign } from "@expo/vector-icons";
 import { router } from "expo-router";
-import type locationType from "../index";
+import type { locationType } from "../book";
 import { useLocationStore } from "../../globalStore/locationStore";
 import LanguageSelector from "../../../components/CDropDownCustom";
+import CustomButton from "../../../components/CustomButton";
 
 interface CustomHeaderProps {
   onBackPress: () => void;
@@ -37,13 +39,6 @@ const BookingArea = () => {
   const [selectedLanguages, setSelectedLanguages] = useState<string[]>([]);
 
   const [selected, setSelected] = useState(undefined);
-  const data = [
-    { label: "One", value: "1" },
-    { label: "Two", value: "2" },
-    { label: "Three", value: "3" },
-    { label: "Four", value: "4" },
-    { label: "Five", value: "5" },
-  ];
 
   return (
     <View>
@@ -55,15 +50,29 @@ const BookingArea = () => {
       <View className="p-4">
         <View>
           <Text className="text-xl mb-5">Destinations</Text>
-          <View>
+          <View style={{ gap: 10, flexDirection: "row", marginBottom: 20 }}>
             {locationStore.locations.map((item) => (
               <LocationCard key={item.id} item={item} />
             ))}
           </View>
           <View className="mt-5">
-            <View className="bg-gray-300 p-4 rounded-md gap-3">
-              <View className="flex-row items-center">
-                <Text>No of People:</Text>
+            <View
+              style={{
+                backgroundColor: "rgb(230,230,230)",
+                padding: 16,
+                borderRadius: 10,
+                gap: 10,
+              }}
+            >
+              <View
+                className="flex-row items-center"
+                style={{
+                  borderBottomWidth: 1,
+                  paddingBottom: 10,
+                  borderBottomColor: "rgba(200,200,200,0.7)",
+                }}
+              >
+                <Text className="text-lg">No of People:</Text>
                 <TextInput
                   keyboardType="number-pad"
                   style={{
@@ -76,17 +85,56 @@ const BookingArea = () => {
                   value="0"
                 />
               </View>
-              <View className="flex-row items-center justify-between">
-                <Text>Language</Text>
+              <View
+                className="flex-row items-center justify-between"
+                style={{
+                  borderBottomWidth: 1,
+                  paddingBottom: 10,
+                  borderBottomColor: "rgba(200,200,200,0.7)",
+                }}
+              >
+                <Text className="text-lg">Language</Text>
                 <LanguageSelector
                   setSelectedLanguages={setSelectedLanguages}
                   selectedLanguages={selectedLanguages}
                 />
               </View>
+              <View
+                className="flex-row items-center justify-between"
+                style={{
+                  borderBottomWidth: 1,
+                  paddingBottom: 10,
+                  borderBottomColor: "rgba(200,200,200,0.7)",
+                }}
+              >
+                <Text className="text-lg">Travel Coverage</Text>
+                <Switch />
+              </View>
+              <View
+                className="flex-row items-center justify-between"
+                style={{
+                  borderBottomWidth: 1,
+                  paddingBottom: 10,
+                  borderBottomColor: "rgba(200,200,200,0.7)",
+                }}
+              >
+                <Text className="text-lg">Food Coverage</Text>
+                <Switch />
+              </View>
               <View className="flex-row items-center justify-between">
-                <Text>Search DeadLine</Text>
+                <Text className="text-lg">Lodging Coverage</Text>
+                <Switch />
               </View>
             </View>
+          </View>
+          <View>
+            <CustomButton
+              title="Search"
+              style={{ marginTop: 20, marginLeft: "auto" }}
+              onPress={() => {
+                router.push("/(home)/maps");
+              }}
+            />
           </View>
         </View>
       </View>
