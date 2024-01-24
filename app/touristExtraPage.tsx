@@ -1,4 +1,10 @@
-import { Image, KeyboardAvoidingView, Text, View } from "react-native";
+import {
+  ActivityIndicator,
+  Image,
+  KeyboardAvoidingView,
+  Text,
+  View,
+} from "react-native";
 import { Link, router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import CustomButton from "../components/CustomButton";
@@ -15,7 +21,7 @@ export default function Modal() {
   const [lastname, setLastName] = useState("");
   const [citizenShipNo, setCitizenShipNo] = useState("");
   const [image, setImage] = useState<string | null>(null);
-  const { signin } = useAuth();
+  const { signin, isLoading, error } = useAuth();
   const { userType } = useStore();
   const userData = useRegisterUser((state) => state);
 
@@ -34,7 +40,36 @@ export default function Modal() {
       alert("Please upload profile picture");
       return;
     }
-    signin(userData.username, "password");
+    if (userType == "Guide") {
+      signin(
+        userData.username,
+        userData.password,
+        userData.email,
+        image,
+        "",
+        "",
+        firstname + " " + lastname
+      );
+    } else {
+      console.log(
+        userData.username,
+        userData.password,
+        userData.email,
+        image,
+        citizenShipNo,
+        "",
+        firstname + " " + lastname
+      );
+      signin(
+        userData.username,
+        userData.password,
+        userData.email,
+        image,
+        citizenShipNo,
+        "",
+        firstname + " " + lastname
+      );
+    }
   };
   return (
     <KeyboardAvoidingView className="flex-1 bg-white">
@@ -46,7 +81,8 @@ export default function Modal() {
       </View>
       <View className={"p-4 mt-auto mb-auto mx-5"}>
         <UploadImage image={image} setImage={setImage} />
-        <View style={{ gap: 30 }}>
+        <View style={{ marginVertical: 20 }}>
+          {error && <Text className="text-red-500 text-center">{error}</Text>}
           <InputWithLogo
             logo="user"
             value={firstname}
@@ -79,13 +115,23 @@ export default function Modal() {
             terms & conditions
           </Text>
         </View>
-
-        <CustomButton
-          title="Create Account"
-          onPress={handleRegister}
-          disabled={!checked}
-          style={{ width: "100%", alignSelf: "flex-end", borderRadius: 40 }}
-        />
+        <View style={{ position: "relative" }}>
+          <CustomButton
+            title="Create Account"
+            onPress={handleRegister}
+            disabled={!checked}
+            style={{ width: "100%", alignSelf: "flex-end", borderRadius: 40 }}
+          />
+          <View>
+            {isLoading && (
+              <ActivityIndicator
+                style={{ position: "absolute", bottom: 10, right: 10 }}
+                size="small"
+                color={"white"}
+              />
+            )}
+          </View>
+        </View>
         <CustomButton
           title="Previous"
           onPress={() => router.push("/signup")}

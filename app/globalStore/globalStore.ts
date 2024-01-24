@@ -41,3 +41,12 @@ export const useUserImage = create<userImageType>((set) => ({
   profilePic: "",
   setProfilePic: (pp: string) => set({ profilePic: pp }),
 }));
+
+// make jwt store
+export const useJwtToken = create<{
+  jwtToken: string | null;
+  setJwtToken: (jwtToken: string | null) => void;
+}>((set) => ({
+  jwtToken: "",
+  setJwtToken: (jwtToken: string | null) => set({ jwtToken }),
+}));

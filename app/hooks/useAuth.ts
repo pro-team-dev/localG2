@@ -4,6 +4,8 @@ import { AuthContext } from "../providers/authProvider";
 import { router } from "expo-router";
 import { getData, getValueFor, save, saveData } from "../../utils/storage";
 import useStore from "./useStore";
+import fetch from "node-fetch";
+import { useJwtToken } from "../globalStore/globalStore";
 
 const useAuth = () => {
   const { user, setUser } = useContext(AuthContext);
@@ -11,15 +13,41 @@ const useAuth = () => {
   const [jwtToken, setJwtToken] = useState<string | undefined>(undefined);
   const [error, setError] = useState<string | undefined>();
   const { userType, setUserType } = useStore();
+  const tokenState = useJwtToken();
 
-  const login = async (username: string, password: string) => {
+  const login = async (email: string, password: string) => {
     try {
       setIsLoading(true);
-      const authToken = "dfdfdfd";
-      setUser({ username, email: "", userType });
+      setError(undefined);
+      if (email == "" || password == "") {
+        setError("Please fill all the fields");
+        return;
+      }
+      const res = await fetch("https://api.localg.biz/api/user/login/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          password,
+        }),
+      });
+      const data = await res.json();
+      if (data.errors) {
+        setError(data.error);
+        setIsLoading(false);
+        return;
+      }
+
+      const authToken = data.token.access;
+      const refreshToken = data.token.refresh;
+      setUser({ username: "", email: email, userType });
       setJwtToken(authToken);
+      tokenState.setJwtToken(authToken);
       await save("token", authToken);
-      await saveData("userInfo", { username, email: "", userType });
+      await save("refreshToken", refreshToken);
+      await saveData("userInfo", { username: "", email, userType });
       setIsLoading(false);
       if (userType == "Guide") {
         router.push("/(guide)/");
@@ -33,17 +61,65 @@ const useAuth = () => {
     }
   };
 
-  const signin = async (username: string, password: string) => {
+  const signin = async (
+    username: string,
+    password: string,
+    email: string,
+    profile_pic: string,
+    citizenship: string,
+    phone_number: string,
+    fullname: string
+  ) => {
     try {
-      if (username === "" || password === "") {
-        throw new Error("Please fill in all fields");
+      setError(undefined);
+      if (
+        username == "" ||
+        password == "" ||
+        email == "" ||
+        profile_pic == "" ||
+        fullname == ""
+      ) {
+        setError("Please fill all the fields");
+        return;
       }
+      // if (phone_number.length != 10) {
+      //   setError("Please enter a valid phone number");
+      //   return;
+      // }
+      setIsLoading(true);
 
-      setUser({ username, email: "", userType });
-      const authToken = "dfdfdfd";
-      setJwtToken(authToken);
-      await save("token", authToken);
-      await saveData("userInfo", { username, email: "", userType });
+      let res = await fetch("https://api.localg.biz/api/user/register/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username: username,
+          password: password,
+          email: email,
+          is_guide: userType == "Guide" ? true : false,
+          profile: profile_pic,
+          citizenship: citizenship,
+          phone_number: phone_number,
+          name: fullname,
+          hourly_rate: 1200,
+        }),
+      });
+      let data = await res.json();
+      if (data.errors) {
+        setError(data.error);
+        setIsLoading(false);
+        return;
+      }
+      let token = data.token.access;
+      let refreshToken = data.token.refresh;
+
+      setUser({ username, email, userType });
+      setJwtToken(token);
+      tokenState.setJwtToken(token);
+      await save("token", token);
+      await save("refreshToken", refreshToken);
+      await saveData("userInfo", { username, email, userType });
       if (userType == "Guide") {
         router.push("/(guide)/");
       } else {
@@ -52,6 +128,7 @@ const useAuth = () => {
     } catch (error) {
       console.error("Signin error:", error);
       setError("Signin failed. Please check your credentials.");
+      setIsLoading(false);
     }
   };
 
@@ -59,9 +136,12 @@ const useAuth = () => {
     try {
       setIsLoading(true);
       setJwtToken(undefined);
+      tokenState.setJwtToken(null);
       setUser(undefined);
+      setUserType(undefined);
       await save("token", "");
       await saveData("userInfo", "");
+      await save("refreshToken", "");
       setIsLoading(false);
       router.push("/login");
     } catch (error) {
@@ -83,6 +163,7 @@ const useAuth = () => {
       setUserType(userInfo.userType);
       setUser(userInfo);
       setJwtToken(userToken);
+      tokenState.setJwtToken(userToken);
       setIsLoading(false);
     } catch (error) {
       console.error("IsLoggedIn error:", error);
@@ -103,6 +184,7 @@ const useAuth = () => {
     isLoading,
     error,
     clearError: () => setError(undefined),
+    jwtToken,
   };
 };
 

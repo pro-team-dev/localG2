@@ -8,31 +8,36 @@ import {
   SafeAreaView,
   KeyboardAvoidingView,
   Image,
+  ActivityIndicator,
 } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import InputWithLogo from "../components/InputWithLogo";
 import useAuth from "./hooks/useAuth";
 
 export default function LoginForm() {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { user, login } = useAuth();
+  const { user, login, isLoading, error } = useAuth();
 
   const handleLogin = () => {
     // Implement your login logic here
     // Add your authentication logic here
-    if (username === "" || password === "") {
+    if (email === "" || password === "") {
       alert("Please fill in all fields");
       return;
     }
-    login(username, password);
+    login(email, password);
   };
 
   return (
     <KeyboardAvoidingView className="flex-1 bg-white">
       <View
         className="items-center mt-auto"
-        style={{ position: "relative", display: "flex", justifyContent: "center" }}
+        style={{
+          position: "relative",
+          display: "flex",
+          justifyContent: "center",
+        }}
       >
         <Image
           className="w-28 h-28 "
@@ -40,14 +45,17 @@ export default function LoginForm() {
         />
         <Text className="text-2xl -mt-5">LocalG</Text>
       </View>
-      <View className={"p-4 mt-10 mb-auto mx-5"} style={{ position: "relative" }}>
+      <View
+        className={"p-4 mt-10 mb-auto mx-5"}
+        style={{ position: "relative" }}
+      >
         <Text className="text-3xl text-center mb-6 font-bold">LOGIN</Text>
         <View style={{ gap: 30 }}>
           <InputWithLogo
-            logo="user"
-            value={username}
-            onChangeText={(text) => setUsername(text)}
-            placeholder="Username"
+            logo="mail"
+            value={email}
+            onChangeText={(text) => setEmail(text)}
+            placeholder="Email"
           />
           <InputWithLogo
             logo="lock"
@@ -71,13 +79,26 @@ export default function LoginForm() {
             Register here
           </Link>
         </View>
-        <TouchableOpacity
-          className={"bg-primary-btn py-2 px-4 rounded w-36 mx-auto"}
-          onPress={handleLogin}
-        >
-          <Text className={"text-white text-lg text-center"}>Login</Text>
-        </TouchableOpacity>
+        <View style={{ position: "relative" }}>
+          <TouchableOpacity
+            className={"bg-primary-btn py-2 px-4 rounded w-36 mx-auto"}
+            onPress={handleLogin}
+          >
+            <Text className={"text-white text-lg text-center"}>Login</Text>
+          </TouchableOpacity>
+          {isLoading && (
+            <ActivityIndicator
+              size="large"
+              style={{
+                position: "absolute",
+                top: 0,
+                bottom: 0,
+                right: 0,
+              }}
+            />
+          )}
+        </View>
       </View>
-    </KeyboardAvoidingView >
+    </KeyboardAvoidingView>
   );
 }

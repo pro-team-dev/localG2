@@ -20,13 +20,42 @@ import UserReviewCard from "../../components/Card";
 import { ScrollView } from "react-native-gesture-handler";
 import CustomButton from "../../components/CustomButton";
 import useAuth from "../hooks/useAuth";
-
+import fetch from "node-fetch";
+import { useJwtToken } from "../globalStore/globalStore";
 
 const Profile: React.FC = () => {
   const navigation = useNavigation();
   const [image, setImage] = useState<string | null>(null);
   const [coverImage, setCoverImage] = useState<string | null>(null);
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
+  const jwtToken = useJwtToken((state) => state.jwtToken);
+
+  const [userInfo, setUserInfo] = useState<{
+    email: string;
+    username: string;
+    name: string;
+    profile: string;
+    is_guide: boolean;
+    citizenship?: string;
+  }>();
+  useEffect(() => {
+    const getUserInfo = async () => {
+      const response = await fetch(`https://api.localg.biz/api/user/profile/`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${jwtToken}`,
+        },
+      });
+      const data = await response.json();
+      if (data.errors) {
+        console.log(data.errors);
+        return;
+      }
+      setUserInfo(data);
+      setImage(data.profile);
+    };
+    getUserInfo();
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -38,17 +67,15 @@ const Profile: React.FC = () => {
       >
         <UploadImage setImage={setImage} image={image} />
       </View>
-      <Text style={styles.username}>Rabin Lamichhane</Text>
-      <Text style={styles.email}>rabin@gmail.com</Text>
+      <Text style={styles.username}>{userInfo?.username}</Text>
+      <Text style={styles.email}>{userInfo?.email}</Text>
       <CustomButton
         title="Logout"
-        onPress={logout}// Changed from onPress to onClick
+        onPress={logout} // Changed from onPress to onClick
         style={{
           marginLeft: Dimensions.get("window").height / IMAGE_DIVIDER - 70,
           top: -20,
-
         }}
-
       />
       <ScrollView className="w-full my-5" style={{ marginTop: 0 }}>
         <UserReviewCard
