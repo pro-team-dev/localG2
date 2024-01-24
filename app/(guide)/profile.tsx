@@ -35,7 +35,6 @@ const Profile: React.FC = () => {
   const [hourlyNegotiable, setHourlyNegotiable] = useState<boolean>(false);
   const [daily, setDaily] = useState<number>(5000);
   const [dailyNegotiable, setDailyNegotiable] = useState<boolean>(false);
-  const [checkReviews, setCheckReviews] = useState<boolean>(false);
   let reviewData = [{ rating: 5, reviewText: "I had an amazing experience with the tourist guide. They were very knowledgeable and showed me all the hidden gems of the city. I highly recommend their services to anyone looking for a memorable and insightful tour.", username: "Atul Tiwari", avatar: "https://i.pravatar.cc/300" }, { rating: 3.5, reviewText: "I had an amazing experience with the tourist guide. They were very knowledgeable and showed me all the hidden gems of the city. I highly recommend their services to anyone looking for a memorable and insightful tour.", username: "Anuj Paudel", avatar: "https://i.pravatar.cc/400" }]
   const [reviews, setReviews] = useState<{
     rating: number;
