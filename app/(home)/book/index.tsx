@@ -122,13 +122,16 @@ const Guide = () => {
             )}
           </View>
         </View>
-        <View className="flex-1 bg-slate-100 flex-row items-center pt-3 h-20 px-10 justify-between" style={{
-          position: "absolute",
-          bottom: 50,
-          left: 0,
-          right: 0,
-          backgroundColor: "white",
-        }}>
+        <View
+          className="flex-1 bg-slate-100 flex-row items-center pt-3 h-20 px-10 justify-between"
+          style={{
+            position: "absolute",
+            bottom: 50,
+            left: 0,
+            right: 0,
+            backgroundColor: "white",
+          }}
+        >
           <TouchableOpacity
             onPress={() => {
               if (count > 0) {

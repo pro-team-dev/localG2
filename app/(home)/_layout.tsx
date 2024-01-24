@@ -28,7 +28,9 @@ export default function AppLayout() {
           tabBarIcon: () => <AntDesign name="home" size={24} color="black" />,
           headerRight() {
             return (
-              <TouchableOpacity onPress={() => router.push("/profile")}>
+              <TouchableOpacity
+                onPress={() => router.replace("/(home)/profile")}
+              >
                 <View className="w-10 h-10 bg-slate-200 rounded-full mr-5 justify-center items-center overflow-hidden">
                   <Entypo
                     name="user"

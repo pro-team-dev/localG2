@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { locationType } from "../(home)/guide";
+import { locationType } from "../(home)/book";
 
 interface LocationStoreState {
   locations: locationType[];

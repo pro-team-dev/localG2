@@ -7,7 +7,7 @@ import { AuthContext } from "./providers/authProvider";
 import Intro from "./intro";
 import { GlobalStoreContext, userType } from "./providers/store";
 
-export type User = { username: string; email: string };
+export type User = { username: string; email: string; userType: userType };
 
 const RootLayout = () => {
   const rootNavigationState = useRootNavigationState();
@@ -30,6 +30,7 @@ const RootLayout = () => {
               options={{ headerShown: false, presentation: "modal" }}
             />
             <Stack.Screen name="(home)" options={{ headerShown: false }} />
+            <Stack.Screen name="(guide)" options={{ headerShown: false }} />
           </Stack>
         </SafeAreaView>
       </GlobalStoreContext.Provider>

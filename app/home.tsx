@@ -11,9 +11,6 @@ import useAuth from "./hooks/useAuth";
 
 const Dashboard = () => {
   const { logout } = useAuth();
-  const handleItemClick = (item) => {
-    alert(`Clicked on ${item}`);
-  };
   return (
     <SafeAreaView className="mt-10">
       <CustomButton title="Logout" onPress={() => logout()} />

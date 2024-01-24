@@ -19,10 +19,14 @@ const Index = () => {
   const { userType, setUserType } = useStore();
   const { isLoading, user, logout } = useAuth();
   useEffect(() => {
+    console.log("userType", userType);
     if (!isLoading) {
       if (user && rootNavigationState) {
-        console.log(user);
-        router.replace("/(home)/");
+        if (userType === "Guide") {
+          router.replace("/(guide)");
+        } else {
+          router.replace("/(home)");
+        }
       }
     }
   });

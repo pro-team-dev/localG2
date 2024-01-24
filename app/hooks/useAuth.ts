@@ -1,24 +1,31 @@
+import { userType } from "./../providers/store";
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../providers/authProvider";
 import { router } from "expo-router";
 import { getData, getValueFor, save, saveData } from "../../utils/storage";
+import useStore from "./useStore";
 
 const useAuth = () => {
   const { user, setUser } = useContext(AuthContext);
   const [isLoading, setIsLoading] = useState(true);
   const [jwtToken, setJwtToken] = useState<string | undefined>(undefined);
   const [error, setError] = useState<string | undefined>();
+  const { userType, setUserType } = useStore();
 
   const login = async (username: string, password: string) => {
     try {
       setIsLoading(true);
       const authToken = "dfdfdfd";
-      setUser({ username, email: "" });
+      setUser({ username, email: "", userType });
       setJwtToken(authToken);
       await save("token", authToken);
-      await saveData("userInfo", { username, email: "" });
+      await saveData("userInfo", { username, email: "", userType });
       setIsLoading(false);
-      router.push("/(home)/");
+      if (userType == "Guide") {
+        router.push("/(guide)/");
+      } else {
+        router.push("/(home)/");
+      }
     } catch (error) {
       console.error("Login error:", error);
       setError("Login failed. Please try again.");
@@ -32,12 +39,16 @@ const useAuth = () => {
         throw new Error("Please fill in all fields");
       }
 
-      setUser({ username, email: "" });
+      setUser({ username, email: "", userType });
       const authToken = "dfdfdfd";
       setJwtToken(authToken);
       await save("token", authToken);
-      await saveData("userInfo", { username, email: "" });
-      router.push("/(home)/");
+      await saveData("userInfo", { username, email: "", userType });
+      if (userType == "Guide") {
+        router.push("/(guide)/");
+      } else {
+        router.push("/(home)/");
+      }
     } catch (error) {
       console.error("Signin error:", error);
       setError("Signin failed. Please check your credentials.");
@@ -69,7 +80,7 @@ const useAuth = () => {
         setIsLoading(false);
         return;
       }
-
+      setUserType(userInfo.userType);
       setUser(userInfo);
       setJwtToken(userToken);
       setIsLoading(false);
