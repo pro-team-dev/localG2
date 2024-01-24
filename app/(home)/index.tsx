@@ -1,7 +1,6 @@
 import { View, Text } from "react-native";
 import React from "react";
 import useAuth from "../hooks/useAuth";
-import CustomButton from "../../components/CustomButton";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { router } from "expo-router";
 import Star from "../../components/Star";
@@ -9,12 +8,10 @@ import ReviewStar from "../../components/reviewStar";
 import useLocation from "../hooks/useLocation";
 
 const Index = () => {
-  const { logout } = useAuth();
   const { location } = useLocation();
   return (
     <View className="p-4 bg-slate-50 flex-1">
       <Text className="text-xl">Features</Text>
-      <CustomButton title="logout" onPress={() => logout()} />
       <View style={{ flexDirection: "row", gap: 30, marginTop: 20 }}>
         <CircularCard title={"Tourist \n Package"} />
         <CircularCard title="Guide" link="/book/" />

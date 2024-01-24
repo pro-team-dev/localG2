@@ -16,7 +16,7 @@ const CustomButton = (props: CustomButtonType) => {
     <View>
       <TouchableOpacity
         style={[
-          styles.btn,
+          styles.logoutBtn,
           props.style ? props.style : {},
           props.disabled ? { backgroundColor: Colors.primary.bg } : {},
         ]}
@@ -32,11 +32,19 @@ const styles = StyleSheet.create({
   btn: {
     backgroundColor: COLORS.default.primary.btn,
     paddingVertical: 8,
-    paddingHorizontal: 16,
+    paddingHorizontal: 10,
     width: 144,
     borderRadius: 5,
     marginHorizontal: "auto",
   },
+  logoutBtn: {
+    backgroundColor: COLORS.default.primary.btn,
+    paddingVertical: 6,
+    paddingHorizontal: 8,
+    width: 90,
+    borderRadius: 20,
+    marginHorizontal: "auto",
+  }
 });
 
 export default CustomButton;

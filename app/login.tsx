@@ -31,8 +31,8 @@ export default function LoginForm() {
   return (
     <KeyboardAvoidingView className="flex-1 bg-white">
       <View
-        className="items-center "
-        style={{ transform: [{ translateY: 100 }] }}
+        className="items-center mt-auto"
+        style={{ position: "relative", display: "flex", justifyContent: "center" }}
       >
         <Image
           className="w-28 h-28 "
@@ -40,8 +40,8 @@ export default function LoginForm() {
         />
         <Text className="text-2xl -mt-5">LocalG</Text>
       </View>
-      <View className={"p-4 mt-auto mb-auto mx-5"}>
-        <Text className="text-3xl text-center -mt-5 mb-6 font-bold">LOGIN</Text>
+      <View className={"p-4 mt-10 mb-auto mx-5"} style={{ position: "relative" }}>
+        <Text className="text-3xl text-center mb-6 font-bold">LOGIN</Text>
         <View style={{ gap: 30 }}>
           <InputWithLogo
             logo="user"
@@ -78,6 +78,6 @@ export default function LoginForm() {
           <Text className={"text-white text-lg text-center"}>Login</Text>
         </TouchableOpacity>
       </View>
-    </KeyboardAvoidingView>
+    </KeyboardAvoidingView >
   );
 }

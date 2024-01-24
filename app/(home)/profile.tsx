@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Image,
   StyleSheet,
+  Button,
   Dimensions,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
@@ -17,10 +18,15 @@ import UploadImage from "../../components/CImagePicker";
 import { IMAGE_DIVIDER } from "../../constants/utils";
 import UserReviewCard from "../../components/Card";
 import { ScrollView } from "react-native-gesture-handler";
+import CustomButton from "../../components/CustomButton";
+import useAuth from "../hooks/useAuth";
+
+
 const Profile: React.FC = () => {
   const navigation = useNavigation();
   const [image, setImage] = useState<string | null>(null);
   const [coverImage, setCoverImage] = useState<string | null>(null);
+  const { logout } = useAuth();
 
   return (
     <View style={styles.container}>
@@ -34,7 +40,17 @@ const Profile: React.FC = () => {
       </View>
       <Text style={styles.username}>Rabin Lamichhane</Text>
       <Text style={styles.email}>rabin@gmail.com</Text>
-      <ScrollView className="w-full my-5">
+      <CustomButton
+        title="Logout"
+        onPress={logout}// Changed from onPress to onClick
+        style={{
+          marginLeft: Dimensions.get("window").height / IMAGE_DIVIDER - 70,
+          top: -20,
+
+        }}
+
+      />
+      <ScrollView className="w-full my-5" style={{ marginTop: 0 }}>
         <UserReviewCard
           rating={5}
           reviewText={
