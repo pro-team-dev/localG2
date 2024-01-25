@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   TextInput,
   Switch,
+  Alert,
 } from "react-native";
 import React, { useState } from "react";
 import { AntDesign } from "@expo/vector-icons";
@@ -13,6 +14,7 @@ import type { locationType } from "../book";
 import { useLocationStore } from "../../globalStore/locationStore";
 import LanguageSelector from "../../../components/CDropDownCustom";
 import CustomButton from "../../../components/CustomButton";
+import { useJwtToken } from "../../globalStore/globalStore";
 
 interface CustomHeaderProps {
   onBackPress: () => void;
@@ -37,8 +39,42 @@ const CustomHeader: React.FC<CustomHeaderProps> = ({ onBackPress }) => (
 const BookingArea = () => {
   const locationStore = useLocationStore();
   const [selectedLanguages, setSelectedLanguages] = useState<string[]>([]);
-
+  const [numberOfPeople, setNumberOfPeople] = useState(0);
+  const [travelCoverage, setTravelCoverage] = useState(false);
+  const [foodCoverage, setFoodCoverage] = useState(false);
   const [selected, setSelected] = useState(undefined);
+  const { jwtToken } = useJwtToken();
+
+  const handleSearch = async () => {
+    let data = {
+      // anuj
+      location: "Kathmandu",
+      no_of_people: numberOfPeople,
+      travel_coverage: travelCoverage,
+      food_coverage: foodCoverage,
+      // anuj
+      personal_request: "Any special requests or notes for the tour.",
+      // anuj
+      price: 200,
+      locations: locationStore.locations.map((item) => {
+        return { name: item.text, lat: item.lat, lng: item.lng };
+      }),
+    };
+    let res = await fetch("https://api.localg.biz/api/user/new-tour/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${jwtToken}`,
+      },
+      body: JSON.stringify(data),
+    });
+    let resJson = await res.json();
+    if (resJson.errors) {
+      Alert.alert(resJson.errors[0].message);
+      return;
+    }
+    router.replace("/(home)/offers");
+  };
 
   return (
     <View>
@@ -82,7 +118,12 @@ const BookingArea = () => {
                     backgroundColor: "rgb(230,230,230)",
                     textAlign: "center",
                   }}
-                  value="0"
+                  value={numberOfPeople.toString()}
+                  onChangeText={(text) =>
+                    setNumberOfPeople(
+                      isNaN(parseInt(text)) ? 0 : parseInt(text)
+                    )
+                  }
                 />
               </View>
               <View
@@ -103,27 +144,30 @@ const BookingArea = () => {
                 className="flex-row items-center justify-between"
                 style={{
                   borderBottomWidth: 1,
-                  paddingBottom: 10,
+                  paddingBottom: 15,
+                  paddingTop: 10,
                   borderBottomColor: "rgba(200,200,200,0.7)",
+                  paddingRight: 10,
                 }}
               >
                 <Text className="text-lg">Travel Coverage</Text>
-                <Switch />
+                <Switch
+                  value={travelCoverage}
+                  onValueChange={setTravelCoverage}
+                />
               </View>
               <View
                 className="flex-row items-center justify-between"
                 style={{
                   borderBottomWidth: 1,
-                  paddingBottom: 10,
                   borderBottomColor: "rgba(200,200,200,0.7)",
+                  paddingBottom: 15,
+                  paddingTop: 10,
+                  paddingRight: 10,
                 }}
               >
                 <Text className="text-lg">Food Coverage</Text>
-                <Switch />
-              </View>
-              <View className="flex-row items-center justify-between">
-                <Text className="text-lg">Lodging Coverage</Text>
-                <Switch />
+                <Switch value={foodCoverage} onValueChange={setFoodCoverage} />
               </View>
             </View>
           </View>
@@ -131,9 +175,7 @@ const BookingArea = () => {
             <CustomButton
               title="Search"
               style={{ marginTop: 20, marginLeft: "auto" }}
-              onPress={() => {
-                router.push("/(home)/maps");
-              }}
+              onPress={() => handleSearch()}
             />
           </View>
         </View>

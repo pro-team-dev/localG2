@@ -22,7 +22,7 @@ export default function UploadImage(props: ImageUploaderProps) {
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       aspect: [3, 3],
-      quality: 1,
+      quality: 0.8,
     });
     if (!_image.canceled) {
       setImage(_image.assets[0].uri);

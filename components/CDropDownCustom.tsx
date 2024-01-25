@@ -2,6 +2,7 @@ import { AntDesign } from "@expo/vector-icons";
 import React, { useState } from "react";
 import { View, Text, TouchableOpacity, Modal, StyleSheet } from "react-native";
 import { CheckBox } from "react-native-btr";
+import languagesData from "../constants/languages";
 
 interface Language {
   id: string;
@@ -37,14 +38,6 @@ type propsType = {
 
 const LanguageSelector = (props: propsType) => {
   const { selectedLanguages, setSelectedLanguages } = props;
-  const languages: Language[] = [
-    { id: "en", name: "English" },
-    { id: "es", name: "Spanish" },
-    { id: "fr", name: "French" },
-    { id: "nep", name: "Nepali" },
-    { id: "ind", name: "Hindi" },
-    // Add more languages as needed
-  ];
 
   const [isVisible, setIsVisible] = useState(false);
 
@@ -97,14 +90,14 @@ const LanguageSelector = (props: propsType) => {
             >
               <AntDesign name="close" size={24} color="black" />
             </TouchableOpacity>
-            {languages.map((language) => (
+            {languagesData.map((language) => (
               <View
-                key={language.id}
+                key={language.code}
                 style={{ flexDirection: "row", alignItems: "center", gap: 10 }}
               >
                 <Checkbox
-                  checked={selectedLanguages.includes(language.id)}
-                  onPress={() => toggleLanguage(language.id)}
+                  checked={selectedLanguages.includes(language.code)}
+                  onPress={() => toggleLanguage(language.code)}
                 />
                 <Text>{language.name}</Text>
               </View>

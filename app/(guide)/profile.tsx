@@ -8,6 +8,7 @@ import {
   StyleSheet,
   Dimensions,
   Switch,
+  Alert,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useFonts } from "expo-font";
@@ -22,6 +23,9 @@ import ReviewStar from "../../components/reviewStar";
 import { AntDesign, Feather, FontAwesome5, Fontisto } from "@expo/vector-icons";
 import Seperator from "../../components/seperator";
 import Colors from "../../constants/Colors";
+import languagesData from "../../constants/languages";
+import useAuth from "../hooks/useAuth";
+import { useJwtToken } from "../globalStore/globalStore";
 const Profile: React.FC = () => {
   const navigation = useNavigation();
   const [image, setImage] = useState<string | null>(null);
@@ -33,13 +37,43 @@ const Profile: React.FC = () => {
   const [hourlyNegotiable, setHourlyNegotiable] = useState<boolean>(false);
   const [daily, setDaily] = useState<number>(5000);
   const [dailyNegotiable, setDailyNegotiable] = useState<boolean>(false);
+  const { jwtToken } = useJwtToken();
+
+  const [userInfo, setUserInfo] = useState<{
+    id: number;
+    email: string;
+    name: string;
+    profile: string;
+    username: string;
+    citizenship: string;
+    is_guide: boolean;
+    phone_number: string;
+    hourly_rate: number;
+  }>();
+  useEffect(() => {
+    async function getUserInfo() {
+      const data = await fetch("https://api.localg.biz/api/user/profile/", {
+        headers: {
+          Authorization: `Bearer ${jwtToken}`,
+        },
+      });
+      let user = await data.json();
+      setUserInfo(user);
+      setNumber(user.phone_number || "XXXXXXXXX");
+      setEmail(user.email);
+      setHourly(user.hourly_rate || 1200);
+      setDaily(user.hourly_rate * 8 || 10000);
+      setImage(user.profile);
+    }
+    getUserInfo();
+  }, []);
 
   const handleEdit = () => {
     setIsEdit(!isEdit);
-  }
+  };
   const handleEditSave = () => {
     setIsEdit(!isEdit);
-  }
+  };
 
   return (
     <ScrollView style={{ height: Dimensions.get("window").height }}>
@@ -49,40 +83,86 @@ const Profile: React.FC = () => {
           style={{
             marginTop: Dimensions.get("window").height / IMAGE_DIVIDER - 70,
             marginRight: "auto",
-            marginLeft: -10
+            marginLeft: -10,
           }}
         >
           <UploadImage setImage={setImage} image={image} />
         </View>
         <View style={styles.userDetail}>
           <View>
-            <Text style={styles.username}>Atul Tiwari</Text>
+            <Text style={styles.username}>{userInfo?.name || "--------"}</Text>
             <ReviewStar rating={4.5} height={17} width={17} />
           </View>
           <View style={{ flex: 1, marginLeft: 60, marginTop: 4 }}>
-            <Text style={{ color: Colors.primary["primary-0"], fontWeight: "bold" }}>{`Nrs ${hourly}  \n /hour`}</Text>
+            <Text
+              style={{ color: Colors.primary["primary-0"], fontWeight: "bold" }}
+            >{`Nrs ${hourly}  \n /hour`}</Text>
           </View>
         </View>
-        <View style={{ width: "100%", marginTop: 30, marginLeft: 20, flexDirection: "row", alignItems: "center" }}>
+        <View
+          style={{
+            width: "100%",
+            marginTop: 30,
+            marginLeft: 20,
+            flexDirection: "row",
+            alignItems: "center",
+          }}
+        >
           <View style={{ flexDirection: "column" }}>
-            <Text style={{ fontSize: 20, fontWeight: "bold", marginBottom: 10 }}>About</Text>
+            <Text
+              style={{ fontSize: 20, fontWeight: "bold", marginBottom: 10 }}
+            >
+              About
+            </Text>
             <View className="flex-row items-center" style={{ gap: 10 }}>
               <Feather name="phone-call" />
-              {isEdit ? <TextInput style={styles.editInput} value={number} onChangeText={setNumber} /> : <Text>{number}</Text>}
+              {isEdit ? (
+                <TextInput
+                  style={styles.editInput}
+                  value={number}
+                  onChangeText={setNumber}
+                />
+              ) : (
+                <Text>{number}</Text>
+              )}
             </View>
             <View className="flex-row items-center" style={{ gap: 10 }}>
               <Fontisto name="email" />
-              {isEdit ? <TextInput style={styles.editInput} value={email} onChangeText={setEmail} /> : <Text>{email}</Text>}
+              {isEdit ? (
+                <TextInput
+                  style={styles.editInput}
+                  value={email}
+                  onChangeText={setEmail}
+                />
+              ) : (
+                <Text>{email}</Text>
+              )}
             </View>
           </View>
           <View style={{ marginLeft: "auto", marginTop: 30 }}>
-            {isEdit ? <TouchableOpacity onPress={handleEditSave} style={{ backgroundColor: Colors.primary.btn, borderRadius: 10, padding: 10 }}>
-              <AntDesign name="check" size={24} color="white" />
-            </TouchableOpacity> :
-              <TouchableOpacity onPress={handleEdit} style={{ backgroundColor: "#fff", borderRadius: 10, padding: 10 }}>
+            {isEdit ? (
+              <TouchableOpacity
+                onPress={handleEditSave}
+                style={{
+                  backgroundColor: Colors.primary.btn,
+                  borderRadius: 10,
+                  padding: 10,
+                }}
+              >
+                <AntDesign name="check" size={24} color="white" />
+              </TouchableOpacity>
+            ) : (
+              <TouchableOpacity
+                onPress={handleEdit}
+                style={{
+                  backgroundColor: "#fff",
+                  borderRadius: 10,
+                  padding: 10,
+                }}
+              >
                 <AntDesign name="edit" size={24} color="black" />
               </TouchableOpacity>
-            }
+            )}
           </View>
         </View>
         <Seperator />
@@ -94,52 +174,91 @@ const Profile: React.FC = () => {
         <Seperator />
         <View className="w-full">
           <Text className="text-xl">Pricing (Nrs.)</Text>
-          <View className="flex-row justify-evenly mx-2 px-2 bg-gray-200 mt-4 py-5 rounded-xl" style={{ gap: 20 }}>
-            <View className="flex-column items-center" style={{ gap: 10, marginTop: 0 }}>
+          <View
+            className="flex-row justify-evenly mx-2 px-2 bg-gray-200 mt-4 py-5 rounded-xl"
+            style={{ gap: 20 }}
+          >
+            <View
+              className="flex-column items-center"
+              style={{ gap: 10, marginTop: 0 }}
+            >
               <Text className="text-primary-primary-0">Hourly</Text>
-              <View className="flex-column items-center mx-3" style={{ gap: 10 }}>
-                {isEdit ?
+              <View
+                className="flex-column items-center mx-3"
+                style={{ gap: 10 }}
+              >
+                {isEdit ? (
                   <>
-                    <TextInput style={styles.priceEditInput} value={hourly.toString()} onChangeText={(text) => setHourly(parseInt(text))} />
+                    <TextInput
+                      style={styles.priceEditInput}
+                      value={hourly.toString()}
+                      onChangeText={(text) => setHourly(parseInt(text))}
+                    />
                     <View className="flex-row items-center">
                       <Text>Negotiable</Text>
-                      <Switch value={hourlyNegotiable} onValueChange={setHourlyNegotiable} />
+                      <Switch
+                        value={hourlyNegotiable}
+                        onValueChange={setHourlyNegotiable}
+                      />
                     </View>
                   </>
-                  :
+                ) : (
                   <>
                     <Text>{hourly}</Text>
-                    <Text>{hourlyNegotiable ? "Negotiable" : "Non-Negotiable"}</Text>
+                    <Text>
+                      {hourlyNegotiable ? "Negotiable" : "Non-Negotiable"}
+                    </Text>
                   </>
-                }
-
+                )}
               </View>
             </View>
-            <View className="flex-column items-center" style={{ gap: 10, marginTop: 0 }}>
+            <View
+              className="flex-column items-center"
+              style={{ gap: 10, marginTop: 0 }}
+            >
               <Text className="text-primary-primary-0">One Day</Text>
-              <View className="flex-column items-center mx-3" style={{ gap: 10 }}>
-                {isEdit ?
+              <View
+                className="flex-column items-center mx-3"
+                style={{ gap: 10 }}
+              >
+                {isEdit ? (
                   <>
-                    <TextInput style={styles.priceEditInput} value={daily.toString()} onChangeText={(text) => setDaily(parseInt(text))} />
+                    <TextInput
+                      style={styles.priceEditInput}
+                      value={daily.toString()}
+                      onChangeText={(text) => setDaily(parseInt(text))}
+                    />
                     <View className="flex-row items-center">
                       <Text>Negotiable</Text>
-                      <Switch value={dailyNegotiable} onValueChange={setDailyNegotiable} />
+                      <Switch
+                        value={dailyNegotiable}
+                        onValueChange={setDailyNegotiable}
+                      />
                     </View>
                   </>
-                  :
+                ) : (
                   <>
                     <Text>{daily}</Text>
-                    <Text>{dailyNegotiable ? "Negotiable" : "Non-Negotiable"}</Text>
+                    <Text>
+                      {dailyNegotiable ? "Negotiable" : "Non-Negotiable"}
+                    </Text>
                   </>
-                }
+                )}
               </View>
             </View>
           </View>
-          <Text className="ml-auto mt-3">*For up to <Text className="text-primary-primary-0">3-person Group</Text></Text>
+          <Text className="ml-auto mt-3">
+            *For up to{" "}
+            <Text className="text-primary-primary-0">3-person Group</Text>
+          </Text>
         </View>
         <Seperator />
         <Text className="w-full text-xl">Reviews</Text>
-        <ScrollView className="my-1" style={{ width: Dimensions.get("window").width - 30 }} horizontal>
+        <ScrollView
+          className="my-1"
+          style={{ width: Dimensions.get("window").width - 30 }}
+          horizontal
+        >
           <View style={{ width: Dimensions.get("window").width - 30 }}>
             <UserReviewCard
               rating={5}
@@ -160,71 +279,104 @@ const Profile: React.FC = () => {
               avatar={"https://i.pravatar.cc/400"}
             />
           </View>
-
         </ScrollView>
       </View>
     </ScrollView>
   );
 };
 
-
-
-function Languages(props: { isEdit: boolean }) {
+export function Languages(props: { isEdit: boolean }) {
   const { isEdit } = props;
-  const languageData = ["English", "Nepali", "Hindi", "German"]
   let [lan, setLan] = useState<string[]>(["Nepali"]);
   const [language, setLanguage] = useState<string>("");
 
   const handleAddLanguage = () => {
-    if (language.trim() == "") return;
-    setLan([...lan, language]);
-  }
+    if (language.trim() === "") return;
+
+    const isValidLanguage = languagesData.some((lang) => {
+      return lang.name.trim().toLowerCase() == language.trim().toLowerCase();
+    });
+    if (isValidLanguage) {
+      setLan([...lan, language]);
+      setLanguage("");
+    } else {
+      Alert.alert(`Invalid language: ${language}`);
+    }
+  };
 
   const handleDelete = (index: number) => {
     let _lan = [...lan];
     _lan.splice(index, 1);
     setLan(_lan);
-  }
+  };
   return (
     <View>
-      {isEdit ?
+      {isEdit ? (
         <View>
-          <View className="flex-row" style={{ gap: 10, marginTop: 10, alignItems: "center" }}>
-            <TextInput value={language} onChangeText={setLanguage} style={styles.editInput} placeholder="Add Language" />
-            <TouchableOpacity onPress={handleAddLanguage} style={{ backgroundColor: Colors.primary.btn, borderRadius: 10, height: 40, paddingHorizontal: 10, justifyContent: "center" }}>
+          <View
+            className="flex-row"
+            style={{ gap: 10, marginTop: 10, alignItems: "center" }}
+          >
+            <TextInput
+              value={language}
+              onChangeText={setLanguage}
+              style={styles.editInput}
+              placeholder="Add Language"
+            />
+            <TouchableOpacity
+              onPress={handleAddLanguage}
+              style={{
+                backgroundColor: Colors.primary.btn,
+                borderRadius: 10,
+                height: 40,
+                paddingHorizontal: 10,
+                justifyContent: "center",
+              }}
+            >
               <AntDesign name="plus" size={24} color="white" />
             </TouchableOpacity>
           </View>
           <View>
             {lan.map((item, index) => (
-              <LanguageItemDeleteable key={index} language={item} index={index} handleDelete={handleDelete} />
+              <LanguageItemDeleteable
+                key={index}
+                language={item}
+                index={index}
+                handleDelete={handleDelete}
+              />
             ))}
           </View>
         </View>
-
-        :
+      ) : (
         <View className="flex-row" style={{ gap: 10, marginTop: 10 }}>
           {lan.map((item, index) => (
             <LanguageItem key={index} language={item} />
           ))}
         </View>
-      }
-
-
+      )}
     </View>
-  )
+  );
 }
 
-function LanguageItemDeleteable(props: { language?: string, index: number, handleDelete: (index: number) => void }) {
-
+function LanguageItemDeleteable(props: {
+  language?: string;
+  index: number;
+  handleDelete: (index: number) => void;
+}) {
   return (
-    <View className="p-1 rounded-sm px-2 flex-row items-center" style={{ gap: 10 }}>
+    <View
+      className="p-1 rounded-sm px-2 flex-row items-center"
+      style={{ gap: 10 }}
+    >
       <Text className="text-[16px]">{props.language}</Text>
-      <TouchableOpacity className="ml-auto" onPress={() => props.handleDelete(props.index)}>
+      <TouchableOpacity
+        className="ml-auto"
+        onPress={() => props.handleDelete(props.index)}
+      >
         <AntDesign name="close" size={24} color="black" />
       </TouchableOpacity>
     </View>
-  )
+  );
 }
 
 function LanguageItem(props: { language?: string }) {
@@ -232,9 +384,8 @@ function LanguageItem(props: { language?: string }) {
     <View className="bg-gray-200 p-1 rounded-sm px-2">
       <Text className="text-[16px]">{props.language}</Text>
     </View>
-  )
+  );
 }
-
 
 const styles = StyleSheet.create({
   container: {
@@ -310,8 +461,7 @@ const styles = StyleSheet.create({
     top: Dimensions.get("window").height / IMAGE_DIVIDER + 10,
     left: 120,
     flexDirection: "row",
-
-  }
+  },
 });
 
 export default Profile;

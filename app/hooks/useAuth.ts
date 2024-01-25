@@ -42,14 +42,20 @@ const useAuth = () => {
 
       const authToken = data.token.access;
       const refreshToken = data.token.refresh;
-      setUser({ username: "", email: email, userType });
+      const userTypeServer = data.user_type == "tourist" ? "Tourist" : "Guide";
+      setUser({ username: "", email: email, userType: userTypeServer });
       setJwtToken(authToken);
+      setUserType(userTypeServer);
       tokenState.setJwtToken(authToken);
       await save("token", authToken);
       await save("refreshToken", refreshToken);
-      await saveData("userInfo", { username: "", email, userType });
+      await saveData("userInfo", {
+        username: "",
+        email,
+        userType: userTypeServer,
+      });
       setIsLoading(false);
-      if (userType == "Guide") {
+      if (userTypeServer == "Guide") {
         router.push("/(guide)/");
       } else {
         router.push("/(home)/");
@@ -102,10 +108,11 @@ const useAuth = () => {
           citizenship: citizenship,
           phone_number: phone_number,
           name: fullname,
-          hourly_rate: 1200,
+          hourly_rate: null,
         }),
       });
       let data = await res.json();
+      console.log(data);
       if (data.errors) {
         setError(data.error);
         setIsLoading(false);

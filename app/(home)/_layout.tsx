@@ -1,4 +1,4 @@
-import { AntDesign } from "@expo/vector-icons";
+import { AntDesign, MaterialIcons } from "@expo/vector-icons";
 import { Tabs } from "expo-router/tabs";
 import { StyleSheet, Text } from "react-native";
 import { View } from "../../components/Themed";
@@ -52,6 +52,26 @@ export default function AppLayout() {
           ...config,
         }}
       />
+      <Tabs.Screen
+        name="offers"
+        options={{
+          title: "Offers",
+          tabBarIcon: () => (
+            <MaterialIcons name="pending-actions" size={24} color="black" />
+          ),
+          ...config,
+        }}
+      />
+      {/* <Tabs.Screen
+        name="ongoing"
+        options={{
+          title: "Ongoing",
+          tabBarIcon: () => (
+            <MaterialIcons name="tour" size={24} color="black" />
+          ),
+          ...config,
+        }}
+      /> */}
       <Tabs.Screen
         name="profile"
         options={{

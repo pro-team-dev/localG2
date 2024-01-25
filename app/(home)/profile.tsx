@@ -8,6 +8,7 @@ import {
   StyleSheet,
   Button,
   Dimensions,
+  ScrollView,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useFonts } from "expo-font";
@@ -17,11 +18,14 @@ import useStore from "../hooks/useStore";
 import UploadImage from "../../components/CImagePicker";
 import { IMAGE_DIVIDER } from "../../constants/utils";
 import UserReviewCard from "../../components/Card";
-import { ScrollView } from "react-native-gesture-handler";
 import CustomButton from "../../components/CustomButton";
 import useAuth from "../hooks/useAuth";
 import fetch from "node-fetch";
 import { useJwtToken } from "../globalStore/globalStore";
+import { AntDesign, Feather, Fontisto } from "@expo/vector-icons";
+import Seperator from "../../components/seperator";
+import Colors from "../../constants/Colors";
+import { Languages } from "../(guide)/profile";
 
 const Profile: React.FC = () => {
   const navigation = useNavigation();
@@ -29,6 +33,9 @@ const Profile: React.FC = () => {
   const [coverImage, setCoverImage] = useState<string | null>(null);
   const { logout, user } = useAuth();
   const jwtToken = useJwtToken((state) => state.jwtToken);
+  const [isEdit, setIsEdit] = useState(false);
+  const [number, setNumber] = useState("");
+  const [email, setEmail] = useState("");
 
   const [userInfo, setUserInfo] = useState<{
     email: string;
@@ -38,6 +45,26 @@ const Profile: React.FC = () => {
     is_guide: boolean;
     citizenship?: string;
   }>();
+
+  const handleSave = async () => {
+    // const response = await fetch(`https://api.localg.biz/api/user/profile/`, {
+    //   method: "PUT",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //     Authorization: `Bearer ${jwtToken}`,
+    //   },
+    //   body: JSON.stringify({
+    //     phone_number: number,
+    //     email: email,
+    //   }),
+    // });
+    // const data = await response.json();
+    // if (data.errors) {
+    //   console.log(data.errors);
+    //   return;
+    // }
+    setIsEdit(false);
+  };
   useEffect(() => {
     const getUserInfo = async () => {
       const response = await fetch(`https://api.localg.biz/api/user/profile/`, {
@@ -53,49 +80,126 @@ const Profile: React.FC = () => {
       }
       setUserInfo(data);
       setImage(data.profile);
+      setEmail(data.email);
+      setNumber(data.phone_number || "XXXXXXXXXX");
     };
     getUserInfo();
   }, []);
 
   return (
-    <View style={styles.container}>
-      <UploadBackgroundImage />
-      <View
-        style={{
-          marginTop: Dimensions.get("window").height / IMAGE_DIVIDER - 70,
-        }}
-      >
-        <UploadImage setImage={setImage} image={image} />
+    <ScrollView
+      style={{ height: Dimensions.get("window").height / IMAGE_DIVIDER }}
+    >
+      <View style={styles.container}>
+        <UploadBackgroundImage />
+        <View
+          style={{
+            marginTop: Dimensions.get("window").height / IMAGE_DIVIDER - 70,
+            marginRight: "auto",
+          }}
+        >
+          <UploadImage setImage={setImage} image={image} />
+        </View>
+        <View
+          style={{
+            flexDirection: "row",
+            marginTop: -40,
+            marginLeft: 110,
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          <View style={{ flexDirection: "column" }}>
+            <Text style={styles.username}>{userInfo?.name}</Text>
+            <Text style={styles.email}>{userInfo?.email}</Text>
+          </View>
+          <TouchableOpacity
+            style={{
+              marginLeft: 80,
+              backgroundColor: "rgba(200,200,200,0.5)",
+              padding: 10,
+              borderRadius: 10,
+            }}
+            onPress={() => logout()}
+          >
+            <AntDesign name="logout" size={24} color="black" />
+          </TouchableOpacity>
+        </View>
+        <View>
+          <View
+            style={{
+              width: "100%",
+              marginTop: 30,
+              marginLeft: 20,
+              flexDirection: "row",
+              alignItems: "center",
+            }}
+          >
+            <View style={{ flexDirection: "column" }}>
+              <Text
+                style={{ fontSize: 20, fontWeight: "bold", marginBottom: 10 }}
+              >
+                About
+              </Text>
+              <View className="flex-row items-center" style={{ gap: 10 }}>
+                <Feather name="phone-call" />
+                {isEdit ? (
+                  <TextInput
+                    style={styles.editInput}
+                    value={number}
+                    onChangeText={setNumber}
+                  />
+                ) : (
+                  <Text>{number}</Text>
+                )}
+              </View>
+              <View className="flex-row items-center" style={{ gap: 10 }}>
+                <Fontisto name="email" />
+                {isEdit ? (
+                  <TextInput
+                    style={styles.editInput}
+                    value={email}
+                    onChangeText={setEmail}
+                  />
+                ) : (
+                  <Text>{email}</Text>
+                )}
+              </View>
+            </View>
+            <View style={{ marginLeft: "auto", marginTop: 30 }}>
+              {isEdit ? (
+                <TouchableOpacity
+                  onPress={handleSave}
+                  style={{
+                    backgroundColor: Colors.primary.btn,
+                    borderRadius: 10,
+                    padding: 10,
+                  }}
+                >
+                  <AntDesign name="check" size={24} color="white" />
+                </TouchableOpacity>
+              ) : (
+                <TouchableOpacity
+                  onPress={() => setIsEdit(true)}
+                  style={{
+                    backgroundColor: "#fff",
+                    borderRadius: 10,
+                    padding: 10,
+                  }}
+                >
+                  <AntDesign name="edit" size={24} color="black" />
+                </TouchableOpacity>
+              )}
+            </View>
+          </View>
+          <Seperator />
+          <View className="w-full">
+            <Text className="text-xl">Languages</Text>
+            <Languages isEdit={isEdit} />
+          </View>
+        </View>
       </View>
-      <Text style={styles.username}>{userInfo?.username}</Text>
-      <Text style={styles.email}>{userInfo?.email}</Text>
-      <CustomButton
-        title="Logout"
-        onPress={logout} // Changed from onPress to onClick
-        style={{
-          marginLeft: Dimensions.get("window").height / IMAGE_DIVIDER - 70,
-          top: -20,
-        }}
-      />
-      <ScrollView className="w-full my-5" style={{ marginTop: 0 }}>
-        <UserReviewCard
-          rating={5}
-          reviewText={
-            "I had an amazing experience with the tourist guide. They were very knowledgeable and showed me all the hidden gems of the city. I highly recommend their services to anyone looking for a memorable and insightful tour."
-          }
-          username={"Atul Tiwari"}
-          avatar={"https://i.pravatar.cc/300"}
-        />
-        <UserReviewCard
-          rating={3.5}
-          reviewText={
-            "I had an amazing experience with the tourist guide. They were very knowledgeable and showed me all the hidden gems of the city. I highly recommend their services to anyone looking for a memorable and insightful tour."
-          }
-          username={"Anuj Paudel"}
-          avatar={"https://i.pravatar.cc/400"}
-        />
-      </ScrollView>
-    </View>
+    </ScrollView>
   );
 };
 
@@ -138,16 +242,20 @@ const styles = StyleSheet.create({
     color: "black",
   },
   username: {
-    position: "absolute",
-    paddingTop: Dimensions.get("window").height / 2.6 - 100,
     fontSize: 20,
-    color: "white",
   },
   email: {
-    position: "absolute",
-    paddingTop: Dimensions.get("window").height / 2.6 - 70,
     fontSize: 13,
-    color: "white",
+  },
+  editInput: {
+    width: 200,
+    height: 40,
+    backgroundColor: "#fff",
+    borderRadius: 10,
+    padding: 10,
+    marginBottom: 10,
+    marginTop: 10,
+    marginLeft: 10,
   },
 });
 
