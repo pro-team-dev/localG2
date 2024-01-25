@@ -352,6 +352,11 @@ export function Languages(props: { isEdit: boolean }) {
           {lan.map((item, index) => (
             <LanguageItem key={index} language={item} />
           ))}
+          {lan.length == 0 ? (
+            <Text className="mx-auto pt-4 items-center">
+              Add Languages you are fluent in{" "}
+            </Text>
+          ) : null}
         </View>
       )}
     </View>
