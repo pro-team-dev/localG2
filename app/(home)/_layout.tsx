@@ -62,7 +62,7 @@ export default function AppLayout() {
           ...config,
         }}
       />
-      {/* <Tabs.Screen
+      <Tabs.Screen
         name="ongoing"
         options={{
           title: "Ongoing",
@@ -71,7 +71,7 @@ export default function AppLayout() {
           ),
           ...config,
         }}
-      /> */}
+      />
 
       <Tabs.Screen
         name="profile"
