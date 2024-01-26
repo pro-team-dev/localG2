@@ -9,33 +9,9 @@ import useUserSocketStore from "../globalStore/websocketStore";
 import { useJwtToken } from "../globalStore/globalStore";
 
 const Index = () => {
-  const { connectWebSocket, data, disconnectWebSocket } = useUserSocketStore();
+  const { data: render } = useUserSocketStore();
   const { user, logout } = useAuth();
   const { jwtToken } = useJwtToken();
-
-  useEffect(() => {
-    const getUserInfo = async () => {
-      console.log(jwtToken);
-      let data = await fetch(`https://api.localg.biz/api/user/profile/`, {
-        headers: {
-          Authorization: `Bearer ${jwtToken}`,
-        },
-      });
-      let result = await data.json();
-      if (result.errors) {
-        Alert.alert(result.errors.code);
-        logout();
-        return;
-      }
-      connectWebSocket(result.id);
-    };
-    getUserInfo();
-
-    return () => {
-      disconnectWebSocket();
-    };
-  }, []);
-  console.log(1);
 
   const { location } = useLocation();
   return (

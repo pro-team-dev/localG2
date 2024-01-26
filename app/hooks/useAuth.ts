@@ -112,7 +112,6 @@ const useAuth = () => {
         }),
       });
       let data = await res.json();
-      console.log(data);
       if (data.errors) {
         setError(data.error);
         setIsLoading(false);

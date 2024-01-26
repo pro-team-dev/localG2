@@ -1,12 +1,13 @@
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, Dimensions } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useJwtToken } from "../globalStore/globalStore";
-import useUserSocketStore from "../globalStore/websocketStore";
+import MapsComponent from "../../components/mapsComponent";
+import useGuideUserSocketStore from "../globalStore/guideSocketStore";
 
 const OnGoing = () => {
   const [data, setData] = useState<any>();
   const { jwtToken } = useJwtToken();
-  const { data: render } = useUserSocketStore();
+  const { data: render } = useGuideUserSocketStore();
 
   useEffect(() => {
     async function getOnGoing() {
@@ -36,12 +37,14 @@ const OnGoing = () => {
       }
     }
 
-    getOnGoing(); // Call the function to fetch ongoing tours
+    getOnGoing();
   }, [render]);
 
   return (
-    <View>
-      <Text>OnGoing</Text>
+    <View style={{ height: Dimensions.get("window").height - 130 }}>
+      <View style={{ flex: 1 }}>
+        <MapsComponent />
+      </View>
       {data && <Card data={data} />}
     </View>
   );
@@ -49,8 +52,7 @@ const OnGoing = () => {
 
 const Card = ({ data }) => {
   return (
-    <View style={styles.card}>
-      <Text style={styles.text}>Tour ID: {data.tour_id}</Text>
+    <View style={[styles.card, { marginTop: 10 }]}>
       <Text style={styles.text}>Location: {data.locations[0].name}</Text>
       <Text style={styles.text}>Status: {data.status}</Text>
       <Text style={styles.text}>Price: {data.price}</Text>
@@ -63,11 +65,7 @@ const Card = ({ data }) => {
         Food Coverage: {data.food_coverage ? "Yes" : "No"}
       </Text>
       <Text style={styles.text}>Personal Request: {data.personal_request}</Text>
-      <Text style={styles.text}>Created At: {data.created_at}</Text>
-      <Text style={styles.text}>Updated At: {data.updated_at}</Text>
       <Text style={styles.text}>Tourist: {data.tourist}</Text>
-      <Text style={styles.text}>Guide: {data.guide}</Text>
-      <Text style={styles.text}>Offer: {data.offer[0]}</Text>
     </View>
   );
 };
