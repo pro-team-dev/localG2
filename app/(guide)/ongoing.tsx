@@ -9,7 +9,7 @@ import useLocation from "../hooks/useLocation";
 const OnGoing = () => {
   const [data, setData] = useState<any>();
   const { jwtToken } = useJwtToken();
-  const { data: render } = useGuideUserSocketStore();
+  const { data: render, location } = useGuideUserSocketStore();
 
   useEffect(() => {
     async function getOnGoing() {
@@ -39,13 +39,25 @@ const OnGoing = () => {
       }
     }
 
-    // getOnGoing();
+    getOnGoing();
   }, [render]);
+
+  let [locationArr, setLocationArr] = useState<any>();
+
+  useEffect(() => {
+    if (location) {
+      setLocationArr(location);
+      console.log(location);
+    }
+  }, [location]);
 
   return (
     <View style={{ height: Dimensions.get("window").height - 130 }}>
       <View style={{ flex: 1 }}>
-        <MapsComponent />
+        <MapsComponent
+          locations={locationArr}
+          cameraLocation={[locationArr.lng, locationArr.lat]}
+        />
       </View>
       {data && <Card data={data} />}
     </View>

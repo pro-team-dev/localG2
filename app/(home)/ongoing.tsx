@@ -7,7 +7,7 @@ import MapsComponent from "../../components/mapsComponent";
 const OnGoing = () => {
   const [data, setData] = useState<any>();
   const { jwtToken } = useJwtToken();
-  const { data: render } = useUserSocketStore();
+  const { data: render, location } = useUserSocketStore();
 
   useEffect(() => {
     async function getOnGoing() {
@@ -40,10 +40,21 @@ const OnGoing = () => {
     getOnGoing(); // Call the function to fetch ongoing tours
   }, [render]);
 
+  let [locationArr, setLocationArr] = useState<any>();
+
+  useEffect(() => {
+    if (location) {
+      setLocationArr(location);
+    }
+  }, [location]);
+
   return (
     <View>
       <View>
-        <MapsComponent />
+        <MapsComponent
+          locations={locationArr}
+          cameraLocation={[locationArr.lng, locationArr.lat]}
+        />
       </View>
       {data && <Card data={data} />}
     </View>

@@ -5,6 +5,7 @@ interface UserSocketStore {
   connectWebSocket: (userId: string) => void;
   disconnectWebSocket: () => void;
   sendWebSocket: (message: any) => void;
+  location: { lat: number | null; lng: number | null };
 }
 
 const useUserSocketStore = create<UserSocketStore>((set) => {
@@ -24,6 +25,17 @@ const useUserSocketStore = create<UserSocketStore>((set) => {
 
       socket.addEventListener("message", (event) => {
         console.log("WebSocket message received:", event.data);
+        if (event.data) {
+          let d = JSON.parse(event.data);
+          if (d.type == "send_location") {
+            set((state) => ({
+              location: {
+                lat: d.location_data.current_location.lat,
+                lng: d.location_data.current_location.lng,
+              },
+            }));
+          }
+        }
 
         set((state) => ({
           data: [...state.data, event.data],
@@ -44,6 +56,7 @@ const useUserSocketStore = create<UserSocketStore>((set) => {
         socket.send(message);
       }
     },
+    location: { lat: null, lng: null },
   };
 
   set(initialState);

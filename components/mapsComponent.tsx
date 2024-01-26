@@ -33,6 +33,7 @@ const MapsComponent = (props: {
   const onMarkerPress = () => {
     setCalloutVisible(true);
   };
+  console.log(props.locations);
   return (
     <View style={{ width: "100%", height: "100%" }}>
       <MapView style={{ flex: 1 }} scaleBarEnabled={false}>
