@@ -57,24 +57,24 @@ export default function AppLayout() {
   const sendLocation = async () => {
     try {
       await locate();
-      // sendWebSocket(
-      //   JSON.stringify({
-      //     tour_id: tour.tour_id,
-      //     location_data: {
-      //       current_location: JSON.stringify({
-      //         lat: location?.coords.latitude,
-      //         lng: location?.coords.longitude,
-      //       }),
-      //     },
-      //   })
-      // );
+      sendWebSocket(
+        JSON.stringify({
+          tour_id: tour.tour_id,
+          location_data: {
+            current_location: JSON.stringify({
+              lat: location?.coords.latitude,
+              lng: location?.coords.longitude,
+            }),
+          },
+        })
+      );
     } catch (e) {
       console.log(e);
     }
   };
 
   useEffect(() => {
-    if (data && tour && tour.tour_id) {
+    if (tour && tour.tour_id) {
       let id = setInterval(() => {
         sendLocation();
       }, 1000);
@@ -82,7 +82,7 @@ export default function AppLayout() {
         clearInterval(id);
       };
     }
-  }, [data]);
+  });
 
   useEffect(() => {
     const getUserInfo = async () => {

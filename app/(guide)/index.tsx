@@ -18,9 +18,8 @@ const Guide = () => {
   const { data: render } = useGuideUserSocketStore();
   useEffect(() => {
     async function getLocation() {
-      if (location) {
+      try {
         let city: string = await getLocationCity();
-        console.log(city);
         let res = await fetch("https://api.localg.biz/api/user/profile/", {
           method: "PUT",
           headers: {
@@ -31,12 +30,18 @@ const Guide = () => {
             location: city.toLowerCase(),
           }),
         });
+        if (res.status != 200) {
+          console.log(res.toString());
+          return;
+        }
         let result = await res.json();
         console.log(result);
         if (result.errors) {
           console.log(result.errors);
           return;
         }
+      } catch (error) {
+        console.log(error);
       }
     }
     getLocation();
