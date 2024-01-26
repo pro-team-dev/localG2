@@ -19,6 +19,7 @@ const Offers = () => {
   const [data, setData] = useState(dummyOffers);
   const [tourId, setTourId] = useState<number>();
   const [reRender, setReRender] = useState(false);
+  const [isPending, setIsPending] = useState(false);
   useEffect(() => {
     console.log("tourId:", tourId);
   }, [tourId]);
@@ -30,9 +31,15 @@ const Offers = () => {
       }}
     >
       <View>
-        <TourDetail setTourId={setTourId} reRender={reRender} />
+        <TourDetail
+          setTourId={setTourId}
+          reRender={reRender}
+          setIsPending={setIsPending}
+        />
         <Seperator />
-        {tourId && <GuideOffer tourId={tourId} setReRender={setReRender} />}
+        {tourId && isPending && (
+          <GuideOffer tourId={tourId} setReRender={setReRender} />
+        )}
       </View>
     </ScrollView>
   );
@@ -41,6 +48,7 @@ const Offers = () => {
 const TourDetail = (props: {
   setTourId: React.Dispatch<React.SetStateAction<number | undefined>>;
   reRender: boolean;
+  setIsPending: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
   const [tourDetail, setTourDetail] = useState<any>();
   const { jwtToken } = useJwtToken();
@@ -61,7 +69,9 @@ const TourDetail = (props: {
           // console.log(data);
           setTourDetail(data.pending_tours[0]);
           props.setTourId(data.pending_tours[0].tour_id);
-          console.log(data.pending_tours[0]);
+          if (data.pending_tours[0].status === "pending") {
+            props.setIsPending(true);
+          }
         } else {
           console.log("error");
         }
