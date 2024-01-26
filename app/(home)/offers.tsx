@@ -193,13 +193,16 @@ const OfferItem = (props) => {
   useEffect(() => {
     async function getGuide() {
       try {
-        const res = await fetch(`https://api.localg.biz/api/user/profile/`, {
-          method: "GET",
-          headers: {
-            // anuj
-            Authorization: `Bearer ${jwtToken}`,
-          },
-        });
+        const res = await fetch(
+          `https://api.localg.biz/api/user/profile/${guideId}/`,
+          {
+            method: "GET",
+            headers: {
+              // anuj
+              Authorization: `Bearer ${jwtToken}`,
+            },
+          }
+        );
         const data = await res.json();
         if (data.errors) {
           console.log(data);

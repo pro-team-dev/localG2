@@ -12,18 +12,13 @@ import * as opencage from "opencage-api-client";
 const Guide = () => {
   const [data, setData] = useState<any[]>([]);
   const { jwtToken } = useJwtToken();
-  const { location } = useLocation();
+  const { location, getLocationCity } = useLocation();
   const [reRender, setReRender] = useState(false);
   useEffect(() => {
     async function getLocation() {
       if (location) {
-        let data = await opencage.geocode({
-          key: process.env.EXPO_PUBLIC_OPENCAGE_API_KEY,
-          q: "27.694860, 85.324701",
-        });
-        let r = data.results[0];
-
-        let city: string = r.components.county;
+        let city: string = await getLocationCity();
+        console.log(city);
         let res = await fetch("https://api.localg.biz/api/user/profile/", {
           method: "PUT",
           headers: {
@@ -34,7 +29,6 @@ const Guide = () => {
             location: city.toLowerCase(),
           }),
         });
-        console.log(r.components.county);
         let result = await res.json();
         console.log(result);
         if (result.errors) {
