@@ -2,6 +2,7 @@ import { View, Text, StyleSheet } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useJwtToken } from "../globalStore/globalStore";
 import useUserSocketStore from "../globalStore/websocketStore";
+import MapsComponent from "../../components/mapsComponent";
 
 const OnGoing = () => {
   const [data, setData] = useState<any>();
@@ -41,7 +42,7 @@ const OnGoing = () => {
 
   return (
     <View>
-      <Text>OnGoing</Text>
+      <MapsComponent />
       {data && <Card data={data} />}
     </View>
   );

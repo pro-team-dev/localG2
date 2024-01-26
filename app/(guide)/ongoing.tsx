@@ -62,27 +62,32 @@ const Card = (props: { data: any }) => {
   const sendLocation = async () => {
     try {
       await locate();
-      sendWebSocket({
-        tour_id: data.tour_id,
-        location_data: {
-          current_location: JSON.stringify(location),
-        },
-      });
+      sendWebSocket(
+        JSON.stringify({
+          tour_id: data.tour_id,
+          location_data: {
+            current_location: JSON.stringify({
+              lat: location?.coords.latitude,
+              lng: location?.coords.longitude,
+            }),
+          },
+        })
+      );
     } catch (e) {
       console.log(e);
     }
   };
 
-  //   useEffect(() => {
-  //     if (data && data.tour_id) {
-  //       let id = setInterval(() => {
-  //         sendLocation();
-  //       }, 1000);
-  //       return () => {
-  //         clearInterval(id);
-  //       };
-  //     }
-  //   }, [data]);
+  useEffect(() => {
+    if (data && data.tour_id) {
+      let id = setInterval(() => {
+        sendLocation();
+      }, 1000);
+      return () => {
+        clearInterval(id);
+      };
+    }
+  }, [data]);
 
   const handleComplte = async () => {
     let data1 = data;
