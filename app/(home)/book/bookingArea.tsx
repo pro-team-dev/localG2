@@ -80,12 +80,11 @@ const BookingArea = () => {
         body: JSON.stringify(data),
       });
       let resJson = await res.json();
-      console.log(resJson);
+      // console.log(resJson);
       if (resJson.errors) {
         Alert.alert(resJson.errors[0].message);
         return;
       }
-      console.log(resJson);
       router.replace("/(home)/offers");
     } catch (error) {
       console.error(error);
