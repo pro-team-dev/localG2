@@ -19,7 +19,7 @@ const Offers = () => {
   const [data, setData] = useState(dummyOffers);
   const [tourId, setTourId] = useState<number>();
   const [reRender, setReRender] = useState(false);
-  const [isPending, setIsPending] = useState(false);
+  const [isPending, setIsPending] = useState(true);
   useEffect(() => {
     console.log("tourId:", tourId);
   }, [tourId]);

@@ -73,6 +73,17 @@ export default function AppLayout() {
         }}
       /> */}
       <Tabs.Screen
+        name="book/ongoing"
+        options={{
+          title: "OnGoing",
+          tabBarIcon: () => <AntDesign name="API" size={24} color="black" />,
+          ...config,
+          // headerShown: false,
+          // tabBarItemStyle: { display: "none" },
+          // tabBarStyle: { display: "none" },
+        }}
+      />
+      <Tabs.Screen
         name="profile"
         options={{
           title: "Profile",
