@@ -1,5 +1,6 @@
 import * as Location from "expo-location";
 import { useEffect, useState } from "react";
+import * as opencage from "opencage-api-client";
 
 const useLocation = () => {
   const [location, setLocation] = useState<Location.LocationObject | null>(
@@ -20,7 +21,18 @@ const useLocation = () => {
     let location = await Location.getCurrentPositionAsync({});
     setLocation(location);
   };
-  return { location, errorMsg, locate };
+
+  const getLocationCity = async () => {
+    let data = await opencage.geocode({
+      key: process.env.EXPO_PUBLIC_OPENCAGE_API_KEY,
+      q: `${location?.coords.latitude},${location?.coords.longitude}`,
+    });
+    let r = data.results[0];
+    let city: string = r.components.county;
+    return city;
+  };
+
+  return { location, errorMsg, locate, getLocationCity };
 };
 
 export default useLocation;

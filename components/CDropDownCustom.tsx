@@ -5,7 +5,7 @@ import { CheckBox } from "react-native-btr";
 import languagesData from "../constants/languages";
 
 interface Language {
-  id: string;
+  code: string;
   name: string;
 }
 
@@ -32,8 +32,8 @@ const Checkbox: React.FC<{ checked: boolean; onPress: () => void }> = ({
 );
 
 type propsType = {
-  selectedLanguages: string[];
-  setSelectedLanguages: React.Dispatch<React.SetStateAction<string[]>>;
+  selectedLanguages: Language[];
+  setSelectedLanguages: React.Dispatch<React.SetStateAction<Language[]>>;
 };
 
 const LanguageSelector = (props: propsType) => {
@@ -41,14 +41,19 @@ const LanguageSelector = (props: propsType) => {
 
   const [isVisible, setIsVisible] = useState(false);
 
-  const toggleLanguage = (languageId: string) => {
-    const isSelected = selectedLanguages.includes(languageId);
+  const toggleLanguage = (language: Language) => {
+    const isSelected = selectedLanguages.some(
+      (lang) => lang.code === language.code
+    );
     if (isSelected) {
-      setSelectedLanguages(selectedLanguages.filter((id) => id !== languageId));
+      setSelectedLanguages(
+        selectedLanguages.filter((lang) => lang.code !== language.code)
+      );
     } else {
-      setSelectedLanguages([...selectedLanguages, languageId]);
+      setSelectedLanguages([...selectedLanguages, language]);
     }
   };
+  console.log(selectedLanguages);
 
   const toggleVisibility = () => {
     setIsVisible(!isVisible);
@@ -69,10 +74,10 @@ const LanguageSelector = (props: propsType) => {
           }}
         >
           {selectedLanguages.length > 2
-            ? `${selectedLanguages[0]}, ${selectedLanguages[1]}, +${
+            ? `${selectedLanguages[0].name}, ${selectedLanguages[1].name}, +${
                 selectedLanguages.length - 2
               } more`
-            : selectedLanguages.join(", ")}
+            : selectedLanguages.map((lang) => lang.name).join(", ")}
         </Text>
         <AntDesign name="pluscircleo" size={15} color="black" />
       </TouchableOpacity>
@@ -96,8 +101,10 @@ const LanguageSelector = (props: propsType) => {
                 style={{ flexDirection: "row", alignItems: "center", gap: 10 }}
               >
                 <Checkbox
-                  checked={selectedLanguages.includes(language.code)}
-                  onPress={() => toggleLanguage(language.code)}
+                  checked={selectedLanguages.some(
+                    (lang) => lang.code === language.code
+                  )}
+                  onPress={() => toggleLanguage(language)}
                 />
                 <Text>{language.name}</Text>
               </View>

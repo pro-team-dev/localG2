@@ -15,6 +15,12 @@ import { useLocationStore } from "../../globalStore/locationStore";
 import LanguageSelector from "../../../components/CDropDownCustom";
 import CustomButton from "../../../components/CustomButton";
 import { useJwtToken } from "../../globalStore/globalStore";
+import useLocation from "../../hooks/useLocation";
+
+interface Language {
+  code: string;
+  name: string;
+}
 
 interface CustomHeaderProps {
   onBackPress: () => void;
@@ -38,42 +44,52 @@ const CustomHeader: React.FC<CustomHeaderProps> = ({ onBackPress }) => (
 );
 const BookingArea = () => {
   const locationStore = useLocationStore();
-  const [selectedLanguages, setSelectedLanguages] = useState<string[]>([]);
+  const [selectedLanguages, setSelectedLanguages] = useState<Language[]>([]);
   const [numberOfPeople, setNumberOfPeople] = useState(0);
   const [travelCoverage, setTravelCoverage] = useState(false);
   const [foodCoverage, setFoodCoverage] = useState(false);
   const [selected, setSelected] = useState(undefined);
   const { jwtToken } = useJwtToken();
+  let { location, getLocationCity } = useLocation();
 
   const handleSearch = async () => {
-    let data = {
-      // anuj
-      location: "Kathmandu",
-      no_of_people: numberOfPeople,
-      travel_coverage: travelCoverage,
-      food_coverage: foodCoverage,
-      // anuj
-      personal_request: "Any special requests or notes for the tour.",
-      // anuj
-      price: 200,
-      locations: locationStore.locations.map((item) => {
-        return { name: item.text, lat: item.lat, lng: item.lng };
-      }),
-    };
-    let res = await fetch("https://api.localg.biz/api/user/new-tour/", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${jwtToken}`,
-      },
-      body: JSON.stringify(data),
-    });
-    let resJson = await res.json();
-    if (resJson.errors) {
-      Alert.alert(resJson.errors[0].message);
-      return;
+    try {
+      let city = await getLocationCity();
+
+      let data = {
+        // anuj
+        location: city.toLowerCase(),
+        no_of_people: numberOfPeople,
+        travel_coverage: travelCoverage,
+        food_coverage: foodCoverage,
+        language: selectedLanguages.map((item) => item.name),
+        // anuj
+        personal_request: "Any special requests or notes for the tour.",
+        // anuj
+        price: 200,
+        locations: locationStore.locations.map((item) => {
+          return { name: item.text, lat: item.lat, lng: item.lng };
+        }),
+      };
+      let res = await fetch("https://api.localg.biz/api/user/new-tour/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${jwtToken}`,
+        },
+        body: JSON.stringify(data),
+      });
+      let resJson = await res.json();
+      console.log(resJson);
+      if (resJson.errors) {
+        Alert.alert(resJson.errors[0].message);
+        return;
+      }
+      console.log(resJson);
+      router.replace("/(home)/offers");
+    } catch (error) {
+      console.error(error);
     }
-    router.replace("/(home)/offers");
   };
 
   return (

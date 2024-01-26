@@ -167,6 +167,20 @@ const useAuth = () => {
         setIsLoading(false);
         return;
       }
+
+      let res = await fetch("https://api.localg.biz/api/user/ongoing-tours/", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${userToken}`,
+        },
+      });
+      let data = await res.json();
+      if (data.errors) {
+        if (data.errors.code == "token_not_valid") {
+          logout();
+        }
+      }
       setUserType(userInfo.userType);
       setUser(userInfo);
       setJwtToken(userToken);

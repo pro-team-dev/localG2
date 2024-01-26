@@ -18,6 +18,10 @@ import { useJwtToken } from "../globalStore/globalStore";
 const Offers = () => {
   const [data, setData] = useState(dummyOffers);
   const [tourId, setTourId] = useState<number>();
+  const [reRender, setReRender] = useState(false);
+  useEffect(() => {
+    console.log("tourId:", tourId);
+  }, [tourId]);
   return (
     <ScrollView
       style={{
@@ -26,9 +30,9 @@ const Offers = () => {
       }}
     >
       <View>
-        <TourDetail setTourId={setTourId} />
+        <TourDetail setTourId={setTourId} reRender={reRender} />
         <Seperator />
-        {tourId && <GuideOffer tourId={tourId} />}
+        {tourId && <GuideOffer tourId={tourId} setReRender={setReRender} />}
       </View>
     </ScrollView>
   );
@@ -36,6 +40,7 @@ const Offers = () => {
 
 const TourDetail = (props: {
   setTourId: React.Dispatch<React.SetStateAction<number | undefined>>;
+  reRender: boolean;
 }) => {
   const [tourDetail, setTourDetail] = useState<any>();
   const { jwtToken } = useJwtToken();
@@ -53,10 +58,10 @@ const TourDetail = (props: {
         );
         const data = await res.json();
         if (data.status === "success") {
-          setTourDetail(data.pending_tours[data.pending_tours.length - 1]);
-          props.setTourId(
-            data.pending_tours[data.pending_tours.length - 1].tour_id
-          );
+          // console.log(data);
+          setTourDetail(data.pending_tours[0]);
+          props.setTourId(data.pending_tours[0].tour_id);
+          console.log(data.pending_tours[0]);
         } else {
           console.log("error");
         }
@@ -65,67 +70,78 @@ const TourDetail = (props: {
       }
     }
     getTourDetail();
-  });
+  }, [props.reRender]);
   return (
     <View className="p-4">
-      <View>
-        <Text className="text-xl font-semibold">
-          {tourDetail &&
-            tourDetail.locations.map((item: any, index: number) => {
-              return (
-                item.name.split(",")[0] +
-                (index === tourDetail.locations.length - 1 ? "" : ", ")
-              );
-            })}
-        </Text>
-      </View>
-      <View
-        style={{
-          flexDirection: "row",
-          alignItems: "center",
-          justifyContent: "space-between",
-          marginTop: 10,
-        }}
-      >
-        <View className="left">
-          <Text className="font-light">
-            <Text className="font-medium">Location: {"         "}</Text>{" "}
-            {tourDetail ? tourDetail.location : "No location"}
-          </Text>
-          <Text className="font-light">
-            <Text className="font-medium">Langage: {"         "}</Text> Eng,
-            Esp, Nep
-          </Text>
-          <Text className="font-light">
-            <Text className="font-medium">No of People: {"  "}</Text>
-            {tourDetail ? tourDetail.no_of_people : 0}
-          </Text>
-          <Text className="font-light">
-            <Text className="font-medium">Price: {"  "}</Text>
-            Nrs. {tourDetail ? tourDetail.price : 0}
-          </Text>
-          <Text style={{ marginTop: 10 }}>
-            {tourDetail ? tourDetail.personal_request : "No special request"}
-          </Text>
-        </View>
-        <View className="right">
-          {tourDetail && tourDetail.food_coverage ? (
-            <Text className="text-primary-primary-0">Travel Coverage </Text>
-          ) : (
-            ""
-          )}
-          {tourDetail && tourDetail.travel_coverage ? (
-            <Text className="text-primary-primary-0">Food Coverage </Text>
-          ) : (
-            ""
-          )}
-        </View>
-      </View>
+      {tourDetail && tourDetail.status == "pending" ? (
+        <>
+          <View>
+            <Text className="text-xl font-semibold">
+              {tourDetail &&
+                tourDetail.locations.map((item: any, index: number) => {
+                  return (
+                    item.name.split(",")[0] +
+                    (index === tourDetail.locations.length - 1 ? "" : ", ")
+                  );
+                })}
+            </Text>
+          </View>
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "space-between",
+              marginTop: 10,
+            }}
+          >
+            <View className="left">
+              <Text className="font-light">
+                <Text className="font-medium">Location: {"         "}</Text>{" "}
+                {tourDetail ? tourDetail.location : "No location"}
+              </Text>
+              <Text className="font-light">
+                <Text className="font-medium">Langage: {"         "}</Text> Eng,
+                Esp, Nep
+              </Text>
+              <Text className="font-light">
+                <Text className="font-medium">No of People: {"  "}</Text>
+                {tourDetail ? tourDetail.no_of_people : 0}
+              </Text>
+              <Text className="font-light">
+                <Text className="font-medium">Price: {"  "}</Text>
+                Nrs. {tourDetail ? tourDetail.price : 0}
+              </Text>
+              <Text style={{ marginTop: 10 }}>
+                {tourDetail
+                  ? tourDetail.personal_request
+                  : "No special request"}
+              </Text>
+            </View>
+            <View className="right">
+              {tourDetail && tourDetail.food_coverage ? (
+                <Text className="text-primary-primary-0">Travel Coverage </Text>
+              ) : (
+                ""
+              )}
+              {tourDetail && tourDetail.travel_coverage ? (
+                <Text className="text-primary-primary-0">Food Coverage </Text>
+              ) : (
+                ""
+              )}
+            </View>
+          </View>
+        </>
+      ) : (
+        <Text>No Offers</Text>
+      )}
     </View>
   );
 };
 
-function GuideOffer(props: { tourId: number }) {
+function GuideOffer(props: {
+  tourId: number;
+  setReRender: React.Dispatch<React.SetStateAction<boolean>>;
+}) {
   const { jwtToken } = useJwtToken();
   const [data, setData] = useState<any>([]);
   useEffect(() => {
@@ -154,13 +170,13 @@ function GuideOffer(props: { tourId: number }) {
       }
     }
     getGuideOffer();
-  });
+  }, []);
 
   return (
     <View style={{ marginTop: 20 }}>
       {data.map((item, index) => (
         <View key={index}>
-          <OfferItem item={item} />
+          <OfferItem item={item} setReRender={props.setReRender} />
           <Seperator />
         </View>
       ))}
@@ -196,7 +212,7 @@ const OfferItem = (props) => {
       }
     }
     getGuide();
-  });
+  }, []);
 
   const handleAccept = async () => {
     setIsLoading(true);
@@ -217,12 +233,13 @@ const OfferItem = (props) => {
       }
     );
     let resJson = await res.json();
-    console.log(resJson);
     if (resJson.status === "error") {
       Alert.alert(resJson.message);
       console.log(resJson);
       return;
     }
+    Alert.alert("Tour accepted");
+    props.setReRender((prev) => !prev);
     setIsLoading(false);
   };
   return (

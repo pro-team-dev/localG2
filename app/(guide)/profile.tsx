@@ -38,6 +38,7 @@ const Profile: React.FC = () => {
   const [daily, setDaily] = useState<number>(5000);
   const [dailyNegotiable, setDailyNegotiable] = useState<boolean>(false);
   const { jwtToken } = useJwtToken();
+  let [lan, setLan] = useState<string[]>([]);
 
   const [userInfo, setUserInfo] = useState<{
     id: number;
@@ -71,7 +72,26 @@ const Profile: React.FC = () => {
   const handleEdit = () => {
     setIsEdit(!isEdit);
   };
-  const handleEditSave = () => {
+  const handleEditSave = async () => {
+    let res = await fetch("https://api.localg.biz/api/user/profile/", {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${jwtToken}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        phone_number: number,
+        email: email,
+        hourly_rate: hourly,
+        languages: lan,
+      }),
+    });
+    let result = await res.json();
+    if (result.errors) {
+      Alert.alert("Error", result.errors[0].message);
+      return;
+    }
+    Alert.alert("Success", "Profile Updated");
     setIsEdit(!isEdit);
   };
 
@@ -169,7 +189,7 @@ const Profile: React.FC = () => {
 
         <View className="w-full">
           <Text className="text-xl">Languages</Text>
-          <Languages isEdit={isEdit} />
+          <Languages isEdit={isEdit} lan={lan} setLan={setLan} />
         </View>
         <Seperator />
         <View className="w-full">
@@ -285,9 +305,13 @@ const Profile: React.FC = () => {
   );
 };
 
-export function Languages(props: { isEdit: boolean }) {
+export function Languages(props: {
+  isEdit: boolean;
+  lan: string[];
+  setLan: React.Dispatch<React.SetStateAction<string[]>>;
+}) {
   const { isEdit } = props;
-  let [lan, setLan] = useState<string[]>(["Nepali"]);
+  const { lan, setLan } = props;
   const [language, setLanguage] = useState<string>("");
 
   const handleAddLanguage = () => {
@@ -337,7 +361,7 @@ export function Languages(props: { isEdit: boolean }) {
             </TouchableOpacity>
           </View>
           <View>
-            {lan.map((item, index) => (
+            {lan?.map((item, index) => (
               <LanguageItemDeleteable
                 key={index}
                 language={item}
@@ -349,10 +373,10 @@ export function Languages(props: { isEdit: boolean }) {
         </View>
       ) : (
         <View className="flex-row" style={{ gap: 10, marginTop: 10 }}>
-          {lan.map((item, index) => (
+          {lan?.map((item, index) => (
             <LanguageItem key={index} language={item} />
           ))}
-          {lan.length == 0 ? (
+          {lan?.length == 0 ? (
             <Text className="mx-auto pt-4 items-center">
               Add Languages you are fluent in{" "}
             </Text>
