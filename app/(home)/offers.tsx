@@ -14,15 +14,15 @@ import Seperator from "../../components/seperator";
 import Colors from "../../constants/Colors";
 import CustomButton from "../../components/CustomButton";
 import { useJwtToken } from "../globalStore/globalStore";
+import useUserSocketStore from "../globalStore/websocketStore";
 
 const Offers = () => {
   const [data, setData] = useState(dummyOffers);
   const [tourId, setTourId] = useState<number>();
   const [reRender, setReRender] = useState(false);
   const [isPending, setIsPending] = useState(true);
-  useEffect(() => {
-    console.log("tourId:", tourId);
-  }, [tourId]);
+  const { data: render } = useUserSocketStore();
+
   return (
     <ScrollView
       style={{
@@ -50,6 +50,8 @@ const TourDetail = (props: {
   reRender: boolean;
   setIsPending: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
+  const { data: render } = useUserSocketStore();
+
   const [tourDetail, setTourDetail] = useState<any>();
   const { jwtToken } = useJwtToken();
   useEffect(() => {
@@ -80,7 +82,7 @@ const TourDetail = (props: {
       }
     }
     getTourDetail();
-  }, [props.reRender]);
+  }, [props.reRender, render]);
   return (
     <View className="p-4">
       {tourDetail && tourDetail.status == "pending" ? (
@@ -154,6 +156,8 @@ function GuideOffer(props: {
 }) {
   const { jwtToken } = useJwtToken();
   const [data, setData] = useState<any>([]);
+  const { data: render } = useUserSocketStore();
+
   useEffect(() => {
     async function getGuideOffer() {
       try {
@@ -180,7 +184,7 @@ function GuideOffer(props: {
       }
     }
     getGuideOffer();
-  }, []);
+  }, [render]);
 
   return (
     <View style={{ marginTop: 20 }}>
@@ -200,6 +204,8 @@ const OfferItem = (props) => {
   const [guide, setGuide] = useState<any>();
   const { jwtToken } = useJwtToken();
   const [isloading, setIsLoading] = useState(false);
+  const { data: render } = useUserSocketStore();
+
   useEffect(() => {
     async function getGuide() {
       try {
@@ -225,7 +231,7 @@ const OfferItem = (props) => {
       }
     }
     getGuide();
-  }, []);
+  }, [render]);
 
   const handleAccept = async () => {
     setIsLoading(true);

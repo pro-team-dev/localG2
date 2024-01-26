@@ -18,8 +18,8 @@ const useLocation = () => {
       return;
     }
 
-    let location = await Location.getCurrentPositionAsync({});
-    setLocation(location);
+    let location1 = await Location.getCurrentPositionAsync({});
+    setLocation(location1);
   };
 
   const getLocationCity = async () => {

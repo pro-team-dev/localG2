@@ -4,6 +4,7 @@ interface GuideUserSocketStore {
   data: string[]; // Add your desired type for the data property
   connectWebSocket: (userId: string) => void;
   disconnectWebSocket: () => void;
+  sendWebSocket: (message: any) => void;
 }
 
 const useGuideUserSocketStore = create<GuideUserSocketStore>((set) => {
@@ -36,6 +37,11 @@ const useGuideUserSocketStore = create<GuideUserSocketStore>((set) => {
     disconnectWebSocket: () => {
       if (socket) {
         socket.close();
+      }
+    },
+    sendWebSocket: (message: any) => {
+      if (socket) {
+        socket.send(message);
       }
     },
   };

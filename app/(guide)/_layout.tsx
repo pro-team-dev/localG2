@@ -14,7 +14,7 @@ import { useJwtToken } from "../globalStore/globalStore";
 export default function AppLayout() {
   const { logout, user } = useAuth();
   const jwtToken = useJwtToken((state) => state.jwtToken);
-  const { connectWebSocket, data, disconnectWebSocket } =
+  const { connectWebSocket, data, disconnectWebSocket, sendWebSocket } =
     useGuideUserSocketStore();
   const [showNotification, setShowNotification] = useState(false);
 
@@ -43,6 +43,7 @@ export default function AppLayout() {
       disconnectWebSocket();
     };
   }, []);
+
   const [count, setCount] = useState(0);
   useEffect(() => {
     if (data && count > 0) {

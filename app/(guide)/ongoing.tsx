@@ -3,6 +3,8 @@ import React, { useEffect, useState } from "react";
 import { useJwtToken } from "../globalStore/globalStore";
 import MapsComponent from "../../components/mapsComponent";
 import useGuideUserSocketStore from "../globalStore/guideSocketStore";
+import CustomButton from "../../components/CustomButton";
+import useLocation from "../hooks/useLocation";
 
 const OnGoing = () => {
   const [data, setData] = useState<any>();
@@ -50,7 +52,101 @@ const OnGoing = () => {
   );
 };
 
-const Card = ({ data }) => {
+const Card = (props: { data: any }) => {
+  const { data } = props;
+  const { jwtToken } = useJwtToken();
+  const { sendWebSocket } = useGuideUserSocketStore();
+
+  const { location, locate } = useLocation();
+
+  const sendLocation = async () => {
+    try {
+      await locate();
+      sendWebSocket({
+        tour_id: data.tour_id,
+        location_data: {
+          current_location: JSON.stringify(location),
+        },
+      });
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  //   useEffect(() => {
+  //     if (data && data.tour_id) {
+  //       let id = setInterval(() => {
+  //         sendLocation();
+  //       }, 1000);
+  //       return () => {
+  //         clearInterval(id);
+  //       };
+  //     }
+  //   }, [data]);
+
+  const handleComplte = async () => {
+    let data1 = data;
+
+    try {
+      let res: any = await fetch(
+        `https://api.localg.biz/api/user/complete-tour/`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${jwtToken}`,
+          },
+          body: JSON.stringify({
+            tour_id: data1.tour_id,
+          }),
+        }
+      );
+      if (res.status !== 200) {
+        console.log(res);
+        return;
+      }
+      const data = await res.json();
+      if (data.status === "success") {
+        console.log("success");
+      } else {
+        console.log(data);
+        console.log("error");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const handleCancel = async () => {
+    let data1 = data;
+    try {
+      console.log(data1.tour_id);
+      let res: any = await fetch(
+        `https://api.localg.biz/api/user/cancel-tour/`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${jwtToken}`,
+          },
+          body: JSON.stringify({
+            tour_id: data1.tour_id,
+          }),
+        }
+      );
+      if (res.status !== 200) {
+        console.log(res.status);
+        return;
+      }
+      const data = await res.json();
+      if (data.status === "success") {
+        console.log("success");
+      } else {
+        if (!data) console.log(undefined);
+
+        if (data) console.log(data);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <View style={[styles.card, { marginTop: 10 }]}>
       <Text style={styles.text}>Location: {data.locations[0].name}</Text>
@@ -66,6 +162,20 @@ const Card = ({ data }) => {
       </Text>
       <Text style={styles.text}>Personal Request: {data.personal_request}</Text>
       <Text style={styles.text}>Tourist: {data.tourist}</Text>
+      <View
+        style={{ flexDirection: "row", justifyContent: "flex-end", gap: 5 }}
+      >
+        <CustomButton
+          style={{ width: 100, backgroundColor: "rgb(200,100,100)" }}
+          title="Cancel"
+          onPress={() => handleCancel()}
+        />
+        <CustomButton
+          style={{ width: 150 }}
+          title="Complete"
+          onPress={() => handleComplte()}
+        />
+      </View>
     </View>
   );
 };
