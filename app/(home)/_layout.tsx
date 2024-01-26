@@ -10,13 +10,79 @@ import useUserSocketStore from "../globalStore/websocketStore";
 import useAuth from "../hooks/useAuth";
 import { useJwtToken } from "../globalStore/globalStore";
 import { useEffect, useState } from "react";
+import useTourStore from "../globalStore/tourStore";
 
 export default function AppLayout() {
   const config = {};
-  const { connectWebSocket, data, disconnectWebSocket } = useUserSocketStore();
+  const { connectWebSocket, data, disconnectWebSocket, sendWebSocket } =
+    useUserSocketStore();
   const { user, logout } = useAuth();
   const { jwtToken } = useJwtToken();
   const [showNotification, setShowNotification] = useState(false);
+
+  const tour = useTourStore();
+  useEffect(() => {
+    const getOnGoing = async () => {
+      try {
+        const res = await fetch(
+          "https://api.localg.biz/api/user/ongoing-tours/",
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${jwtToken}`,
+            },
+          }
+        );
+        if (res.status !== 200) {
+          console.log(res);
+          console.log("error");
+          return;
+        }
+
+        const data1 = await res.json();
+        if (data1.status === "success") {
+          tour.setTourDetail(data1.tour.tour_id);
+        } else {
+          console.log(data1);
+          console.log("error");
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    getOnGoing();
+  });
+
+  const { locate, location } = useLocation();
+  const sendLocation = async () => {
+    try {
+      await locate();
+      // sendWebSocket(
+      //   JSON.stringify({
+      //     tour_id: tour.tour_id,
+      //     location_data: {
+      //       current_location: JSON.stringify({
+      //         lat: location?.coords.latitude,
+      //         lng: location?.coords.longitude,
+      //       }),
+      //     },
+      //   })
+      // );
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  useEffect(() => {
+    if (data && tour && tour.tour_id) {
+      let id = setInterval(() => {
+        sendLocation();
+      }, 1000);
+      return () => {
+        clearInterval(id);
+      };
+    }
+  }, [data]);
 
   useEffect(() => {
     const getUserInfo = async () => {

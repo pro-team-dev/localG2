@@ -8,12 +8,14 @@ import { useEffect, useState } from "react";
 import { useJwtToken } from "../globalStore/globalStore";
 import useLocation from "../hooks/useLocation";
 import * as opencage from "opencage-api-client";
+import useGuideUserSocketStore from "../globalStore/guideSocketStore";
 
 const Guide = () => {
   const [data, setData] = useState<any[]>([]);
   const { jwtToken } = useJwtToken();
   const { location, getLocationCity } = useLocation();
   const [reRender, setReRender] = useState(false);
+  const { data: render } = useGuideUserSocketStore();
   useEffect(() => {
     async function getLocation() {
       if (location) {
@@ -35,11 +37,10 @@ const Guide = () => {
           console.log(result.errors);
           return;
         }
-        console.log(result);
       }
     }
     getLocation();
-  }, [location]);
+  }, [location, render]);
   useEffect(() => {
     async function getPending() {
       try {
@@ -63,7 +64,7 @@ const Guide = () => {
       }
     }
     getPending();
-  }, [reRender]);
+  }, [reRender, render]);
   const { logout } = useAuth();
   return (
     <View>
@@ -87,9 +88,10 @@ function GuideItem(props: {
   item: any;
   setReRender: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
+  const { data: render } = useGuideUserSocketStore();
+
   const { item } = props;
   const { tour_id } = item;
-  // console.log(item);
   const [touristData, setTouristData] = useState<any>();
   const { jwtToken } = useJwtToken();
   useEffect(() => {
@@ -120,7 +122,7 @@ function GuideItem(props: {
       }
     }
     getTouristData();
-  }, [item.tourist]);
+  }, [item.tourist, render]);
 
   const handleReach = async () => {
     let res = await fetch(

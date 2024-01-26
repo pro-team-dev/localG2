@@ -42,7 +42,9 @@ const OnGoing = () => {
 
   return (
     <View>
-      <MapsComponent />
+      <View>
+        <MapsComponent />
+      </View>
       {data && <Card data={data} />}
     </View>
   );

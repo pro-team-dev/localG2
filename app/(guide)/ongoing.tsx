@@ -39,7 +39,7 @@ const OnGoing = () => {
       }
     }
 
-    getOnGoing();
+    // getOnGoing();
   }, [render]);
 
   return (
@@ -55,40 +55,6 @@ const OnGoing = () => {
 const Card = (props: { data: any }) => {
   const { data } = props;
   const { jwtToken } = useJwtToken();
-  const { sendWebSocket } = useGuideUserSocketStore();
-
-  const { location, locate } = useLocation();
-
-  const sendLocation = async () => {
-    try {
-      await locate();
-      sendWebSocket(
-        JSON.stringify({
-          tour_id: data.tour_id,
-          location_data: {
-            current_location: JSON.stringify({
-              lat: location?.coords.latitude,
-              lng: location?.coords.longitude,
-            }),
-          },
-        })
-      );
-    } catch (e) {
-      console.log(e);
-    }
-  };
-
-  useEffect(() => {
-    if (data && data.tour_id) {
-      let id = setInterval(() => {
-        sendLocation();
-      }, 1000);
-      return () => {
-        clearInterval(id);
-      };
-    }
-  }, [data]);
-
   const handleComplte = async () => {
     let data1 = data;
 

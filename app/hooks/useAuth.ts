@@ -33,6 +33,11 @@ const useAuth = () => {
           password,
         }),
       });
+      if (res.status != 200) {
+        setError("Invalid credentials");
+        setIsLoading(false);
+        return;
+      }
       const data = await res.json();
       if (data.errors) {
         setError(data.error);
@@ -142,6 +147,8 @@ const useAuth = () => {
     try {
       setIsLoading(true);
       setJwtToken(undefined);
+      setUserType(undefined);
+
       tokenState.setJwtToken(null);
       setUser(undefined);
       setUserType(undefined);
@@ -176,6 +183,7 @@ const useAuth = () => {
       });
       if (res.status != 200) {
         logout();
+        return;
       }
       let data = await res.json();
       if (data.errors) {

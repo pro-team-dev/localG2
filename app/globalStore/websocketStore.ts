@@ -4,6 +4,7 @@ interface UserSocketStore {
   data: string[]; // Add your desired type for the data property
   connectWebSocket: (userId: string) => void;
   disconnectWebSocket: () => void;
+  sendWebSocket: (message: any) => void;
 }
 
 const useUserSocketStore = create<UserSocketStore>((set) => {
@@ -36,6 +37,11 @@ const useUserSocketStore = create<UserSocketStore>((set) => {
     disconnectWebSocket: () => {
       if (socket) {
         socket.close();
+      }
+    },
+    sendWebSocket: (message: any) => {
+      if (socket) {
+        socket.send(message);
       }
     },
   };

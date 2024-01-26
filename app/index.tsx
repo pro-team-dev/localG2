@@ -55,11 +55,6 @@ const Index = () => {
           style={{ borderRadius: 30, paddingVertical: 15, width: 200 }}
           onPress={handleSetUserType("Tourist")}
         />
-        <CustomButton
-          title="Profile"
-          style={{ borderRadius: 30, paddingVertical: 15, width: 200 }}
-          onPress={() => router.replace("/profile")}
-        />
       </View>
       <View className="absolute -bottom-[160px] -left-[720px] z-10">
         <Image className="" source={require("../assets/images/tourist.png")} />
